@@ -27,7 +27,15 @@ def lbpcascasdes():
     lp = path(lbppath)
     return lp.files()
 
-
+def using_cascades(img, cascPath, minNeighbors = 5, scaleFactor = 1.1,\
+                   *args, **kwargs):
+    gray1 = get_gray(img)
+    faceCascade = cv2.CascadeClassifier(cascPath)
+    faces = faceCascade.detectMultiScale(gray1, minNeighbors = minNeighbors,\
+                                         scaleFactor = scaleFactor, *args,\
+                                         **kwargs)
+    return faces
+    
     
     
 
