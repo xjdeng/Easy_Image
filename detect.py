@@ -16,7 +16,17 @@ def convert_rect(myinput0):
     w = myinput[2]
     h = myinput[3]
     return dlib.rectangle(x,y, w + x, y + h)
+    
+def default_haar(img, minNeighbors = 5, scaleFactor = 1.1, *args, **kwargs):
+    haar = haarpath + "haarcascade_frontalface_alt2.xml"
+    return using_cascades(img, haar, minNeighbors = 5, scaleFactor = 1.1,\
+                          *args, **kwargs)
 
+def default_lbp(img, minNeighbors = 5, scaleFactor = 1.1, *args, **kwargs):
+    lbp = lbppath + "lbpcascade_frontalface.xml"
+    return using_cascades(img, lbp, minNeighbors = 5, scaleFactor = 1.1,\
+                          *args, **kwargs) 
+    
 def get_gray(img):
     if isinstance(img, classes.EasyImage):
         img_ref = img.img
@@ -46,8 +56,7 @@ def using_cascades(img, cascPath, minNeighbors = 5, scaleFactor = 1.1,\
     for f in faces:
         result.append(convert_rect(f))
     return result
-    
-    
+   
     
 
 def using_dlib(img, level = 0):
