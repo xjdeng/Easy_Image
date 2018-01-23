@@ -42,7 +42,10 @@ def using_cascades(img, cascPath, minNeighbors = 5, scaleFactor = 1.1,\
     faces = faceCascade.detectMultiScale(gray1, minNeighbors = minNeighbors,\
                                          scaleFactor = scaleFactor, *args,\
                                          **kwargs)
-    return [convert_rect(x) for x in faces]
+    result = dlib.rectangles()
+    for f in faces:
+        result.append(convert_rect(f))
+    return result
     
     
     
