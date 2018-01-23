@@ -1,6 +1,22 @@
 from __future__ import absolute_import
 import cv2, dlib
 import classes
+import os
+from path import Path as path
+
+mypath = os.path.abspath(__file__)
+dir_path = os.path.dirname(mypath)
+haarpath = dir_path + "/haarcascades/"
+lbppath = dir_path + "/lbpcascades/"
+
+def haarcascades():
+    hp = path(haarpath)
+    return hp.files()
+
+def lbpcascasdes():
+    lp = path(lbppath)
+    return lp.files()
+
 
 def using_dlib(img, level = 0):
     """
