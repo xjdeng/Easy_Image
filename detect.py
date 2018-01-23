@@ -9,6 +9,14 @@ dir_path = os.path.dirname(mypath)
 haarpath = dir_path + "/haarcascades/"
 lbppath = dir_path + "/lbpcascades/"
 
+def convert_rect(myinput0):
+    myinput = [int(x) for x in myinput0]
+    x = myinput[0]
+    y = myinput[1]
+    w = myinput[2]
+    h = myinput[3]
+    return dlib.rectangle(x,y, w + x, y + h)
+
 def get_gray(img):
     if isinstance(img, classes.EasyImage):
         img_ref = img.img
@@ -34,7 +42,7 @@ def using_cascades(img, cascPath, minNeighbors = 5, scaleFactor = 1.1,\
     faces = faceCascade.detectMultiScale(gray1, minNeighbors = minNeighbors,\
                                          scaleFactor = scaleFactor, *args,\
                                          **kwargs)
-    return faces
+    return [convert_rect(x) for x in faces]
     
     
     
