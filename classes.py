@@ -1,5 +1,9 @@
+from __future__ import absolute_import
+import detect
 import cv2, dlib
 import numpy as np
+
+detector = detect.default_haar
 
 class EasyImage(object):
     
@@ -9,6 +13,13 @@ class EasyImage(object):
             self._img = myinput
         else:
             raise(NotAnImage)
+            
+    def detect_faces(self):
+        faces = detector(self)
+        if len(faces) == 0:
+            return None
+        else:
+            return [EasyFace(self, face) for face in faces]
             
     def getimg(self):
         return self._img

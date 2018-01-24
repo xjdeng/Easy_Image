@@ -29,7 +29,7 @@ def default_lbp(img, minNeighbors = 5, scaleFactor = 1.1, *args, **kwargs):
     
 def get_gray(img):
     if isinstance(img, classes.EasyImage):
-        img_ref = img.img
+        img_ref = img.getimg()
     else:
         img_ref = cv2.imread(img)
         if img_ref is None:
