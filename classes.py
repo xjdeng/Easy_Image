@@ -1,4 +1,4 @@
-import cv2
+import cv2, dlib
 import numpy as np
 
 class EasyImage(object):
@@ -22,7 +22,20 @@ class EasyImageFile(EasyImage):
         else:
             raise(NotAnImage)
     
-                
+class EasyFace(EasyImage):
+
+    def __init__(self, an_easy_image, a_rect):
+        if isinstance(an_easy_image, EasyImage) & \
+        isinstance(a_rect, dlib.rectangle):
+            self.parent_image = an_easy_image
+            self.face = a_rect #should be class dlib.rectangle
+        else:
+            raise(NotFace)      
+            
+    #TODO: overload the getimg() function to return the face from self.face
 
 class NotAnImage(Exception):
+    pass
+
+class NotFace(Exception):
     pass
