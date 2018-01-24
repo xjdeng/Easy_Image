@@ -30,10 +30,15 @@ class EasyFace(EasyImage):
             self.parent_image = an_easy_image
             self.face = a_rect #should be class dlib.rectangle
         else:
-            raise(NotFace)      
+            raise(NotFace)
+    
+    def getimg(self):
+        x = self.face.left()
+        y = self.face.top()
+        x2 = self.face.right()
+        y2 = self.face.bottom()
+        return self.parent_image.getimg()[y:y2,x:x2]
             
-    #TODO: overload the getimg() function to return the face from self.face
-
 class NotAnImage(Exception):
     pass
 
