@@ -10,7 +10,7 @@ def load(img):
         im = Image.open(img)
         raw = im._getexif()[exif_field].decode()
         return json.loads(raw)
-    except (TypeError, OSError):
+    except (TypeError, OSError, KeyError):
         return None
 
 def save(img, obj):

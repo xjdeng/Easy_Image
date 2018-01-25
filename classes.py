@@ -37,8 +37,20 @@ class EasyImageFile(EasyImage):
             self._img = cv2.imread(mypath)
         else:
             raise(NotAnImage)
+            
+    def detect_faces(self, cvv = None, dlibv = None, detector = default_detector):
+        test = self.faces_from_exif(cvv, dlibv, detector)
+        if test is None:
+            return []
+        elif len(test) == 0:
+            return self.force_detect_faces(detector)
+        else:
+            return test
+            
     
-    def faces_from_exif(self, cvv = None, dlibv = None, detector_dict = None):
+    def faces_from_exif(self, cvv = None, dlibv = None, detector = None):
+        if isinstance(detector, detect.DetectorParams):
+            detector = detector.to_dict()
         test = exif_json.load(self.path)
         if (test is None) or (isinstance(test, dict) == False):
             return []
@@ -49,8 +61,10 @@ class EasyImageFile(EasyImage):
             return []
         if (dlibv is not None) & (dlibv != test['Dlib Version']):
             return []
-        if (detector_dict is not None) & (detector_dict != test['detector']):
+        if (detector is not None) & (detector != test['detector']):
             return []
+        if len(test['faces']) == 0:
+            return None
         return [EasyFace(self, dlib.rectangle(f[0],f[1],f[2],f[3])) for f in\
                 test['faces']]
     
@@ -65,7 +79,8 @@ class EasyImageFile(EasyImage):
                   for x in [y.face for y in faces]]
         else:
             output['faces'] = []
-        return exif_json.save(self.path, output)
+        exif_json.save(self.path, output)
+        return faces
             
     
 class EasyFace(EasyImage):
