@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 try:
     from . import detect
     from . import exif_json
