@@ -1,9 +1,14 @@
 from __future__ import absolute_import
-import detect
+try:
+    from . import detect
+    from . import exif_json
+except ImportError:
+    import detect
+    import exif_json
 import cv2, dlib
 import numpy as np
 
-default_detector = detect.default_haar
+default_detector = detect.DetectorParams('dlib')
 
 class EasyImage(object):
     
@@ -15,7 +20,7 @@ class EasyImage(object):
             raise(NotAnImage)
             
     def detect_faces(self, detector = default_detector):
-        faces = detector(self)
+        faces = detector.run(self)
         if len(faces) == 0:
             return []
         else:
@@ -42,6 +47,9 @@ class EasyFace(EasyImage):
             self.face = a_rect #should be class dlib.rectangle
         else:
             raise(NotFace)
+    
+    def detect_faces(self):
+        return [self]
     
     def getimg(self):
         x = self.face.left()
