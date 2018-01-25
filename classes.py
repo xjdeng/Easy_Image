@@ -38,6 +38,22 @@ class EasyImageFile(EasyImage):
         else:
             raise(NotAnImage)
     
+    def faces_from_exif(self, cvv = None, dlibv = None, detector_dict = None):
+        test = exif_json.load(self.path)
+        if (test is None) or (isinstance(test, dict) == False):
+            return []
+        for x in ['OpenCV Version', 'Dlib Version', 'detector', 'faces']:
+            if x not in test.keys():
+                return []
+        if (cvv is not None) & (cvv != test['OpenCV Version']):
+            return []
+        if (dlibv is not None) & (dlibv != test['Dlib Version']):
+            return []
+        if (detector_dict is not None) & (detector_dict != test['detector']):
+            return []
+        return [EasyFace(self, dlib.rectangle(f[0],f[1],f[2],f[3])) for f in\
+                test['faces']]
+    
     def force_detect_faces(self, detector = default_detector):
         faces = super(EasyImageFile, self).detect_faces(detector = detector)
         output = {}
@@ -49,7 +65,7 @@ class EasyImageFile(EasyImage):
                   for x in [y.face for y in faces]]
         else:
             output['faces'] = []
-        exif_json.save(self.path, output)
+        return exif_json.save(self.path, output)
             
     
 class EasyFace(EasyImage):
