@@ -3,7 +3,7 @@ import detect
 import cv2, dlib
 import numpy as np
 
-detector = detect.default_haar
+default_detector = detect.default_haar
 
 class EasyImage(object):
     
@@ -14,7 +14,7 @@ class EasyImage(object):
         else:
             raise(NotAnImage)
             
-    def detect_faces(self):
+    def detect_faces(self, detector = default_detector):
         faces = detector(self)
         if len(faces) == 0:
             return []
