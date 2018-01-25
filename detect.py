@@ -46,7 +46,7 @@ def lbpcascasdes():
     return lp.files()
 
 def using_cascades(img, cascPath, minNeighbors = 5, scaleFactor = 1.1,\
-                   *args, **kwargs):
+                   minSize = (0,0), maxSize = (0,0), *args, **kwargs):
     gray1 = get_gray(img)
     faceCascade = cv2.CascadeClassifier(cascPath)
     faces = faceCascade.detectMultiScale(gray1, minNeighbors = minNeighbors,\
@@ -70,4 +70,54 @@ If you can't find any or all of the faces in an image, try increasing the
     gray1 = get_gray(img)
     detector = dlib.get_frontal_face_detector()
     return detector(gray1, level)
+
+
+def get_detector(mydict):
+    return DetectorParams(mydict['detector_type'], mydict['cascade_type'],\
+                          mydict['cascade'], mydict['min_w'], mydict['min_h'], \
+                          mydict['max_w'], mydict['max_h'], mydict['minNeighbors'], \
+                          mydict['scaleFactor'], mydict['levels'])
+
+class DetectorParams(object):
+    def __init__(self, detector_type, cascade_type = None, cascade = None, \
+                 min_w = 0, min_h = 0, max_w = 0, max_h = 0, minNeighbors=5, \
+                 scaleFactor=1.1, levels=0):
+        self.detector_type = detector_type
+        self.cascade_type = cascade_type
+        self.cascade = cascade
+        self.min_w = min_w
+        self.min_h = min_h
+        self.max_w = max_w
+        self.max_h = max_h
+        self.minNeighbors = minNeighbors
+        self.scaleFactor = scaleFactor
+        self.levels = levels
+    
+    def run(self, img):
+        if (self.detector_type == "dlib") | (self.detector_type.lower() == 'hog'):
+            return using_dlib(img, self.levels)
+        else:
+            if self.cascade_type == "haar":
+                cascPath = haarpath
+            else:
+                cascPath = lbppath
+            cascPath += self.cascade
+            return using_cascades(img, cascPath, minSize = (self.min_w, self.min_h)\
+                                  ,maxSize = (self.max_w, self.max_h), \
+                                  minNeighbors = self.minNeighbors, \
+                                  scaleFactor = self.scaleFactor)
+    
+    def to_dict(self):
+        output = {}
+        output['detector_type'] = self.detector_type
+        output['cascade_type'] = self.cascade_type
+        output['cascade'] = self.cascade
+        output['min_w'] = self.min_w
+        output['min_h'] = self.min_h
+        output['max_w'] = self.max_w
+        output['max_h'] = self.max_h
+        output['minNeighbors'] = self.minNeighbors
+        output['scaleFactor'] = self.scaleFactor
+        output['levels'] = self.levels
+        return output
         
