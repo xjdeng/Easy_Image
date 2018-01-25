@@ -17,7 +17,7 @@ class EasyImage(object):
     def detect_faces(self):
         faces = detector(self)
         if len(faces) == 0:
-            return None
+            return []
         else:
             return [EasyFace(self, face) for face in faces]
             
