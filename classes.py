@@ -38,6 +38,20 @@ class EasyImageFile(EasyImage):
         else:
             raise(NotAnImage)
     
+    def force_detect_faces(self, detector = default_detector):
+        faces = super(EasyImageFile, self).detect_faces(detector = detector)
+        output = {}
+        output['OpenCV Version'] = cv2.__version__
+        output['Dlib Version'] = dlib.__version__
+        output['detector'] = detector.to_dict()
+        if len(faces) > 0:
+            output['faces'] = [[x.left(), x.top(), x.right(), x.bottom()] \
+                  for x in [y.face for y in faces]]
+        else:
+            output['faces'] = []
+        exif_json.save(self.path, output)
+            
+    
 class EasyFace(EasyImage):
 
     def __init__(self, an_easy_image, a_rect):
