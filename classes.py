@@ -10,6 +10,10 @@ import numpy as np
 default_detector = detect.DetectorParams('dlib')
 
 class EasyImage(object):
+    """
+Holds a generic image initialized as a numpy.ndarray (like what you'd get if 
+you were to run cv2.imread on a path to an image.)
+    """
     
     def __init__(self, myinput):
         if isinstance(myinput, np.ndarray):
@@ -19,6 +23,10 @@ class EasyImage(object):
             raise(NotAnImage)
             
     def detect_faces(self, detector = default_detector):
+        """
+Returns a list of faces detected in the image; each face is represented using 
+an EasyFace object.
+        """
         faces = detector.run(self)
         if len(faces) == 0:
             return []
@@ -26,9 +34,16 @@ class EasyImage(object):
             return [EasyFace(self, face) for face in faces]
             
     def getimg(self):
+        """
+Returns the image stored in the object in numpy.ndarray format.
+        """
         return self._img
 
 class EasyImageFile(EasyImage):
+    """
+This is a subclass of EasyImage.. these are images that have been loaded from 
+the local disk.  The self.path variable retains the path to the image.
+    """
     
     def __init__(self, mypath):
         if isinstance(mypath, str):
@@ -38,6 +53,18 @@ class EasyImageFile(EasyImage):
             raise(NotAnImage)
             
     def detect_faces(self, cvv = None, dlibv = None, detector = default_detector):
+        """
+The all-purpose facial detection algorithm for image files. First, it'll search
+for faces already cached in the EXIF data and if found, return those. 
+Otherwise, it'll detect faces using the 'detector' specified. The default
+detector uses Dlib's HOG detectors but the detector can be modified to use
+HAAR or LBP classifiers. For more info, see the DetectorParams class in
+detect.py.
+
+The cvv and dlibv variables specify the versions of OpenCV and Dlib to look for
+in the EXIF data. If they're specified as something other than None, then it'll
+ignore the faces in the EXIF if the versions don't match.
+        """
         test = self.faces_from_exif(cvv, dlibv, detector)
         if test is None:
             return []
@@ -48,6 +75,17 @@ class EasyImageFile(EasyImage):
             
     
     def faces_from_exif(self, cvv = None, dlibv = None, detector = None):
+        """
+Look for faces stored in the image EXIF. The cvv and dlibv variables specify
+the versions of OpenCV and Dlib to look for in the EXIF data and the detector
+specifies the detector to look for.  If any of those parameters are set to 
+none, then it'll be ignored. If a particular parameter is not None and it
+doesn't match what's stored in the EXIF, then the faces in the EXIF are ignored
+and this will return [].
+
+If the EXIF specifically says there are no faces in the image, then None is
+returned.
+        """
         if isinstance(detector, detect.DetectorParams):
             detector = detector.to_dict()
         test = exif_json.load(self.path)
@@ -68,6 +106,12 @@ class EasyImageFile(EasyImage):
                 test['faces']]
     
     def force_detect_faces(self, detector = default_detector):
+        """
+Detects faces in an image regardless whether faces are cached in the EXIF. If 
+faces are found, store them in the EXIF, overwriting them if necessary. Also
+stores the OpenCV and Dlib versions as well as the detector used to detect
+the faces.
+        """
         faces = super(EasyImageFile, self).detect_faces(detector = detector)
         output = {}
         output['OpenCV Version'] = cv2.__version__
@@ -83,6 +127,11 @@ class EasyImageFile(EasyImage):
             
     
 class EasyFace(EasyImage):
+    """
+This is a special case of an EasyImage that's a face. It keeps pointers to the
+original image that the face was detected from and a dlib.rectangle object
+representing the faces as its constructors.
+    """
 
     def __init__(self, an_easy_image, a_rect):
         if isinstance(an_easy_image, EasyImage) & \
@@ -104,6 +153,8 @@ class EasyFace(EasyImage):
             
 class NotAnImage(Exception):
     pass
+#TODO: Add more functionality and information to this exception
 
 class NotFace(Exception):
     pass
+#TODO: Add more functionality and information to this exception
