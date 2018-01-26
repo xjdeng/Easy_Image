@@ -4,7 +4,7 @@ try:
 except ImportError:
     import detect
     import exif_json
-import cv2, dlib
+import copy, cv2, dlib
 import numpy as np
 
 default_detector = detect.DetectorParams('dlib')
@@ -32,12 +32,35 @@ an EasyFace object.
             return []
         else:
             return [EasyFace(self, face) for face in faces]
+
+    def draw_faces(self, detector = default_detector, color = (0, 255, 0),\
+                   width = 2):
+        """
+Detects faces in an image then creates a new image with green rectangles 
+drawn around the faces (at least in the default option.)
+        """
+        faces = self.detect_faces(detector)
+        nimg = copy.deepcopy(self._img)
+        for f in faces:
+            f0 = f.face
+            x = f0.left()
+            y = f0.top()
+            x2 = f0.right()
+            y2 = f0.bottom()
+            cv2.rectangle(nimg, (x,y), (x2,y2), color, width)
+        return EasyImage(nimg)
             
     def getimg(self):
         """
 Returns the image stored in the object in numpy.ndarray format.
         """
         return self._img
+    
+    def save(self,newpath):
+        """
+Save the image at the new path: newpath
+        """
+        return cv2.imwrite(newpath, self._img)
 
 class EasyImageFile(EasyImage):
     """
