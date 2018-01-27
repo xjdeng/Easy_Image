@@ -147,6 +147,12 @@ the faces.
             output['faces'] = []
         exif_json.save(self.path, output)
         return faces
+
+    def remove_faces(self):
+        """
+Removes faces from the image's EXIF data        
+        """
+        exif_json.save(self.path, None)
             
     
 class EasyFace(EasyImage):
