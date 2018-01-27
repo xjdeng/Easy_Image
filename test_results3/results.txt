@@ -1,0 +1,4 @@
+2.2921509742736816
+{'detector_type': 'cascade', 'cascade_type': 'lbp', 'cascade': 'lbpcascade_frontalface.xml', 'min_w': 0, 'min_h': 0, 'max_w': 0, 'max_h': 0, 'minNeighbors': 5, 'scaleFactor': 1.1, 'levels': 0}
+
+-11
