@@ -20,7 +20,7 @@ in the variable exif_field into a JSON.
         im = Image.open(img)
         raw = im._getexif()[exif_field].decode()
         return json.loads(raw)
-    except (TypeError, OSError, KeyError):
+    except (TypeError, IOError, KeyError, AttributeError):
         return None
 
 def save(img, obj):
@@ -35,5 +35,5 @@ field specified in exif_field.
         exif_bytes = piexif.dump({"0th":{exif_field:bytes(json_obj,"utf-8")}})
         piexif.insert(exif_bytes, img)
         return True
-    except (TypeError, InvalidImageDataError):
+    except (TypeError, InvalidImageDataError, IOError, AttributeError):
         return False
