@@ -3,10 +3,10 @@ import json
 import piexif
 from piexif._exceptions import InvalidImageDataError
 
-exif_field = 40092
+exif_field = 50707
 """
-Uses the XPComment EXIF field to store strings and JSON. If you want to use a
-different field, see: http://www.exiv2.org/tags.html
+Uses the DNGBackwardVersion EXIF field to store strings and JSON. If you want
+to use a different field, see: http://www.exiv2.org/tags.html
 """
 
 def load(img):
