@@ -39,7 +39,7 @@ an EasyFace object.
 Detects faces in an image then creates a new image with green rectangles 
 drawn around the faces (at least in the default option.)
         """
-        faces = self.detect_faces(detector)
+        faces = self.detect_faces(detector = detector)
         nimg = copy.deepcopy(self._img)
         for f in faces:
             f0 = f.face
