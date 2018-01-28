@@ -1,4 +1,6 @@
 from setuptools import setup
+#https://docs.python.org/2/distutils/setupscript.html
+#Info on including data files
 
 setup(name="Easy_Facial_Recognition",version='0.1',description='Wrapper\
       classes to make facial recognition with OpenCV and Dlib easier',\
