@@ -11,6 +11,19 @@ As of now, Easy Facial Recognition has only been tested to run on Windows 10 wit
 You'll need to set up a few dependencies before running:
 
 `conda install opencv path.py numpy`
+
 `conda install -c conda-forge dlib Pillow`
+
 `pip install piexif`
 
+### What can you do with this module?
+
+##### Initialize a Face with the EasyImage object:
+
+##### Initialize a Face from an image file using the EasyImageFile object:
+
+##### Detect Faces (EasyImage and EasyImageFile objects):
+
+##### Redetect faces in an EasyImageFile object again:
+
+##### Draw boxes around faces:
