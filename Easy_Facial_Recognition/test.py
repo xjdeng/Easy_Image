@@ -35,15 +35,26 @@ def benchmark(testimgs = testdir, destination = destination_dir, detector = \
     timefile = open(destination_dir + "/results.txt", 'w')
     timefile.write(str(t1 - t0) + "\n" + str(detector.to_dict()))
 
+def copytests():
+    test_dir = path(testdir)
+    dest_dir = path("tests/")
+    if dest_dir.exists():
+        dest_dir.rmtree()
+    test_dir.copytree("tests/")
+        
+
 def test1():
+    copytests()
     det = detect.DetectorParams('dlib')
-    benchmark(detector=det, destination="test_results1")
+    benchmark('tests/',detector=det, destination="test_results1")
 
 def test2():
+    copytests()
     det = detect.DetectorParams('cascade','haar','haarcascade_frontalface_alt2.xml')
-    benchmark(detector=det, destination="test_results2")
+    benchmark('tests/',detector=det, destination="test_results2")
     
 def test3():
+    copytests()
     det = detect.DetectorParams('cascade','lbp','lbpcascade_frontalface.xml')
-    benchmark(detector=det, destination="test_results3")
+    benchmark('tests/',detector=det, destination="test_results3")
     
