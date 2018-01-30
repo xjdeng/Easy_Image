@@ -16,9 +16,9 @@ Open a Terminal or Command Prompt
 
 You'll need to set up a few dependencies before running:
 
-`conda install path.py numpy`
+`conda install path.py`
 
-`conda install -c conda-forge opencv dlib Pillow`
+`conda install -c conda-forge numpy opencv dlib Pillow`
 
 `pip install piexif`
 
