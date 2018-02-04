@@ -181,7 +181,7 @@ later stored in an image EXIF.)
         output['levels'] = self.levels
         return output
 
-default_detector = DetectorParams('dlib')
+default_detector = DetectorParams('cascade','haar','haarcascade_frontalface_alt2.xml')
 
 class EasyImage(object):
     """
