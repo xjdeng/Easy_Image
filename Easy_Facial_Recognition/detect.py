@@ -360,4 +360,16 @@ class NotAnImage(Exception):
 
 class NotFace(Exception):
     pass
-#TODO: Add more functionality and information to this exception        
+#TODO: Add more functionality and information to this exception
+
+def faces_in_dir(inputdir, detector = default_detector):
+    mydir = path(inputdir)
+    faces = []
+    for f in mydir.files():
+        try:
+            ei = EasyImageFile(f)
+            newfaces = ei.detect_faces(detector = default_detector)
+            faces += newfaces
+        except (NotAnImage, NotFace):
+            pass
+    return faces
