@@ -373,3 +373,13 @@ def faces_in_dir(inputdir, detector = default_detector):
         except (NotAnImage, NotFace):
             pass
     return faces
+
+def load_image(input1):
+    if isinstance(input1, str):
+        return EasyImageFile(input1)
+    elif isinstance(input1, np.ndarray):
+        return EasyImage(input1)
+    elif isinstance(input1, EasyImage):
+        return copy.copy(input1)
+    else:
+        raise(NotAnImage)
