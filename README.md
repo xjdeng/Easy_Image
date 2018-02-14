@@ -20,7 +20,7 @@ You'll need to set up a few dependencies before running:
 
 `conda install -c conda-forge numpy opencv dlib Pillow`
 
-`pip install piexif`
+`pip install piexif imutils face_recognition_models`
 
 Then download and install Easy Facial Recognition:
 
