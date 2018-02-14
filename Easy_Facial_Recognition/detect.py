@@ -197,6 +197,15 @@ later stored in an image EXIF.)
 
 default_detector = DetectorParams('cascade','haar','haarcascade_frontalface_alt2.xml')
 
+def verify_img(img):
+    if img is None:
+        raise(NotAnImage)
+    if np.max(img) < 1:
+        img2 = 255*img
+        img2 = img2.astype('uint8')
+        return img2
+    else:
+        return img.astype('uint8')
 
 class EasyImage(object):
     """
@@ -207,7 +216,7 @@ you were to run cv2.imread on a path to an image.)
     def __init__(self, myinput):
         if isinstance(myinput, np.ndarray):
             self.path = None
-            self._img = myinput
+            self._img = verify_img(myinput)
         else:
             raise(NotAnImage)
             
@@ -260,9 +269,7 @@ the local disk.  The self.path variable retains the path to the image.
     def __init__(self, mypath):
         if isinstance(mypath, str):
             self.path = mypath
-            self._img = cv2.imread(mypath)
-            if self._img is None:
-                raise(NotAnImage)
+            self._img = verify_img(cv2.imread(mypath))
         else:
             raise(NotAnImage)
             
