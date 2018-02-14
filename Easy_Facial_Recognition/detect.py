@@ -47,29 +47,6 @@ list of dlib.rectangle objects.)
     return using_cascades(img, lbp, minNeighbors = 5, scaleFactor = 1.1,\
                           *args, **kwargs)
 
-def getpoints(face, predictor = None):
-    """
-NEW Function: take an file with a face (imfile) and predictor object and returns
-a list of tuples containing coordinates of the boundaries on the face.
-
-If you don't have a predictor, then create one:
-    
-import dlib
-predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
-
-Note that you can download shape_predictor_68_face_landmarks.dat from a lot of
-places; just Google for one.
-    """
-    if isinstance(face, EasyImage) == False:
-        raise(NotFace)
-    if predictor is None:
-        predictor = default_predictor
-    gray1 = cv2.cvtColor(face.parent_image.getimg(), cv2.COLOR_BGR2GRAY)
-    shape1 = predictor(gray1, face.face)
-    points1 = face_utils.shape_to_np(shape1)
-    return list(map(tuple, points1))
-
-   
 def get_gray(img):
     """
 Takes an image (either as an EasyImage object or path to an image) and
@@ -284,6 +261,8 @@ the local disk.  The self.path variable retains the path to the image.
         if isinstance(mypath, str):
             self.path = mypath
             self._img = cv2.imread(mypath)
+            if self._img is None:
+                raise(NotAnImage)
         else:
             raise(NotAnImage)
             
@@ -391,6 +370,26 @@ representing the faces as its constructors.
         x2 = self.face.right()
         y2 = self.face.bottom()
         return self.parent_image.getimg()[y:y2,x:x2]
+
+    def getpoints(self, predictor = None):
+        """
+    NEW Function: take a face and a predictor object and returns
+    a list of tuples containing coordinates of the boundaries on the face.
+    
+    If you don't have a predictor, then create one:
+        
+    import dlib
+    predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+    
+    Note that you can download shape_predictor_68_face_landmarks.dat from a lot of
+    places; just Google for one.
+        """
+        if predictor is None:
+            predictor = default_predictor
+        gray1 = cv2.cvtColor(self.parent_image.getimg(), cv2.COLOR_BGR2GRAY)
+        shape1 = predictor(gray1, self.face)
+        points1 = face_utils.shape_to_np(shape1)
+        return list(map(tuple, points1))
             
 class NotAnImage(Exception):
     pass
