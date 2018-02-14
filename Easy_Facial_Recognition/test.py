@@ -15,7 +15,7 @@ destination_dir = dirpath + "/test_results/"
 def benchmark(testimgs = testdir, destination = destination_dir, detector = \
               detect.default_detector):
     print("Please don't switch to any other programs while your benchmark is running")
-    test_dir = path(testdir)
+    test_dir = path(testimgs)
     destination_dir = path(destination)
     if destination_dir.exists() == False:
         destination_dir.mkdir()
