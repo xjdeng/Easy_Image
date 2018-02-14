@@ -5,11 +5,15 @@ except ImportError:
 import copy, cv2, dlib, os
 import numpy as np
 from path import Path as path
+from imutils import face_utils
+import face_recognition_models as frm
 
 mypath = os.path.abspath(__file__)
 dir_path = os.path.dirname(mypath)
 haarpath = dir_path + "/haarcascades/"
 lbppath = dir_path + "/lbpcascades/"
+
+default_predictor = dlib.shape_predictor(frm.pose_predictor_model_location())
 
 def convert_rect(myinput0):
     """
@@ -41,8 +45,31 @@ list of dlib.rectangle objects.)
     """
     lbp = lbppath + "lbpcascade_frontalface.xml"
     return using_cascades(img, lbp, minNeighbors = 5, scaleFactor = 1.1,\
-                          *args, **kwargs) 
+                          *args, **kwargs)
+
+def getpoints(face, predictor = None):
+    """
+NEW Function: take an file with a face (imfile) and predictor object and returns
+a list of tuples containing coordinates of the boundaries on the face.
+
+If you don't have a predictor, then create one:
     
+import dlib
+predictor = dlib.shape_predictor("shape_predictor_68_face_landmarks.dat")
+
+Note that you can download shape_predictor_68_face_landmarks.dat from a lot of
+places; just Google for one.
+    """
+    if isinstance(face, EasyImage) == False:
+        raise(NotFace)
+    if predictor is None:
+        predictor = default_predictor
+    gray1 = cv2.cvtColor(face.parent_image.getimg(), cv2.COLOR_BGR2GRAY)
+    shape1 = predictor(gray1, face.face)
+    points1 = face_utils.shape_to_np(shape1)
+    return list(map(tuple, points1))
+
+   
 def get_gray(img):
     """
 Takes an image (either as an EasyImage object or path to an image) and
@@ -74,6 +101,16 @@ in the app you're building; just for your own information.
     """
     lp = path(lbppath)
     return lp.files()
+
+def load_image(input1):
+    if isinstance(input1, str):
+        return EasyImageFile(input1)
+    elif isinstance(input1, np.ndarray):
+        return EasyImage(input1)
+    elif isinstance(input1, EasyImage):
+        return copy.copy(input1)
+    else:
+        raise(NotAnImage)
 
 def using_cascades(img, cascPath, minNeighbors = 5, scaleFactor = 1.1,\
                    minSize = (0,0), maxSize = (0,0), *args, **kwargs):
@@ -182,6 +219,7 @@ later stored in an image EXIF.)
         return output
 
 default_detector = DetectorParams('cascade','haar','haarcascade_frontalface_alt2.xml')
+
 
 class EasyImage(object):
     """
@@ -362,6 +400,7 @@ class NotFace(Exception):
     pass
 #TODO: Add more functionality and information to this exception
 
+
 def faces_in_dir(inputdir, detector = default_detector):
     mydir = path(inputdir)
     faces = []
@@ -373,13 +412,3 @@ def faces_in_dir(inputdir, detector = default_detector):
         except (NotAnImage, NotFace):
             pass
     return faces
-
-def load_image(input1):
-    if isinstance(input1, str):
-        return EasyImageFile(input1)
-    elif isinstance(input1, np.ndarray):
-        return EasyImage(input1)
-    elif isinstance(input1, EasyImage):
-        return copy.copy(input1)
-    else:
-        raise(NotAnImage)
