@@ -315,10 +315,6 @@ returned.
         for x in ['OpenCV Version', 'Dlib Version', 'detector', 'faces']:
             if x not in test.keys():
                 return []
-        if (cvv is not None) & (cvv != test['OpenCV Version']):
-            return []
-        if (dlibv is not None) & (dlibv != test['Dlib Version']):
-            return []
         if (detector is not None) & (detector != test['detector']):
             return []
         if len(test['faces']) == 0:
@@ -370,7 +366,7 @@ representing the faces as its constructors.
     
     def detect_faces(self):
         return [self]
-    
+       
     def getimg(self):
         x = self.face.left()
         y = self.face.top()
