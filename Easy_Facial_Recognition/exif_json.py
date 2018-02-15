@@ -3,13 +3,13 @@ import json
 import piexif
 from piexif._exceptions import InvalidImageDataError
 
-exif_field = 50707
+default_field = 50707
 """
 Uses the DNGBackwardVersion EXIF field to store strings and JSON. If you want
 to use a different field, see: http://www.exiv2.org/tags.html
 """
 
-def load(img):
+def load(img, exif_field = default_field):
     """
 Note: img is the path to an image, not an EasyImage object!
     
@@ -23,7 +23,7 @@ in the variable exif_field into a JSON.
     except (TypeError, IOError, KeyError, AttributeError):
         return None
 
-def save(img, obj):
+def save(img, obj, exif_field = default_field):
     """
 Note: img is the path to an image, not an EasyImage object!    
 
