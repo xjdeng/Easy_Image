@@ -1,7 +1,9 @@
 try:
     from . import exif_json
+    from . import compare
 except ImportError:
     import exif_json
+    import compare
 import copy, cv2, dlib, os
 import numpy as np
 from path import Path as path
@@ -363,6 +365,13 @@ representing the faces as its constructors.
             self.face = a_rect #should be class dlib.rectangle
         else:
             raise(NotFace)
+            
+    def compare_face(self, face, threshold = 0.6):
+        encoding1 = compare.face_encodings(self.parent_image.getimg(), \
+                                           [self.face])[0]
+        encoding2 = compare.face_encodings(face.parent_image.getimg(), \
+                                           [face.face])[0]
+        return compare.compare_faces([encoding1], encoding2, threshold)[0]
     
     def detect_faces(self):
         return [self]
