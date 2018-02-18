@@ -1,6 +1,6 @@
 numpy>=1.10
 path.py>=9.0
 piexif>=1.0.13
-Pillow>=4.3.0
+Pillow>=4.2.0
 face_recognition_models
-face_utils
+imutils
