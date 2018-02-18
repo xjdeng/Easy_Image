@@ -367,11 +367,18 @@ representing the faces as its constructors.
             raise(NotFace)
             
     def compare_face(self, face, threshold = 0.6):
+        """
+Compares 2 faces, seeing whether they're the same person. If you want the actual
+distance between them, set threshold = None.
+        """
         encoding1 = compare.face_encodings(self.parent_image.getimg(), \
                                            [self.face])[0]
         encoding2 = compare.face_encodings(face.parent_image.getimg(), \
                                            [face.face])[0]
-        return compare.compare_faces([encoding1], encoding2, threshold)[0]
+        if threshold is None:
+            return compare.face_distance([encoding1], encoding2)[0]
+        else:
+            return compare.compare_faces([encoding1], encoding2, threshold)[0] 
     
     def detect_faces(self):
         return [self]
