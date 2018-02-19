@@ -4,6 +4,11 @@
 
 OpenCV and Dlib offer some of the best facial recognition algorithms for free, as of this writing.  Unfortunately, I've ended up having to write a lot of duplicate code for the most common facial recognition and image manipulation operations across my various programs.  So I've built wrapper classes and functions into this library to make the process easier.
 
+There are 2 features that differentiate this library (and my approach) from most other approaches to facial recognition:
+
+- Faces are cached in the image EXIF data so they don't need to be redetected, saving time in future executions.
+- Use of distinct objects for faces, images, and even images loaded from files rather than working with numpy arrays, at least at a higher level.
+
 ### Installation
 
 As of now, Easy Facial Recognition has only been tested to run on Windows 10 with Anaconda3 under Python 3.6.  I may test other versions of Python and other OS's in the future and report my results here.  You're also welcome to try it out on other setups - feel free to report any issues here.
