@@ -11,6 +11,8 @@ from imutils import face_utils
 import face_recognition_models as frm
 from skimage.io import imread
 from urllib.error import URLError, HTTPError
+import warnings
+warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
 mypath = os.path.abspath(__file__)
 dir_path = os.path.dirname(mypath)
