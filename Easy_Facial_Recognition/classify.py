@@ -72,7 +72,7 @@ def classify(img, mod = 'inception'):
     Network = MODELS[mod]
     model = Network(weights="imagenet")
     preds = model.predict(img4)
-    return imagenet_utils.decode_predictions(preds)
+    return imagenet_utils.decode_predictions(preds)[0]
 
 # TODO 1. Support Internet img inputs in classify()
 # TODO 2. Cache image classifications in EXIF

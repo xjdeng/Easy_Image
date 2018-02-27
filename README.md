@@ -35,6 +35,24 @@ Then download and install Easy Facial Recognition:
 
 `pip install -U .`
 
+##### Optional But Recommended: Keras (for image classification):
+
+If you don't have Keras, you'll first need to pick a Deep Learning backend for it:
+
+1) Tensorflow (recommended, but not compatible with Windows unless using Python 3.5 or higher): 
+
+```
+pip install tensorflow-gpu
+```
+
+(Leave out the "-gpu" part if you don't have a GPU or don't want to use one.) 
+
+2) Theano: pip install theano
+
+3) Microsoft CNTK: [Installation Instructions](https://docs.microsoft.com/en-us/cognitive-toolkit/setup-windows-python?tabs=cntkpy24)
+
+Then install Keras: pip install keras
+
 ### What can you do with this module?
 
 First, open a terminal or command prompt in a working directory of your choice.  Then run the following to copy some test images to this directory.  **Do this before running any of the following examples!**  Then run the following sections **in order.**
@@ -91,7 +109,11 @@ Since the faces were stored using EXIF tags in the file tests/woman-3046960_640.
 
 `cv2.waitKey(0)`
 
+##### Detect objects in an image (requires Keras):
 
+```
+angryimg.classify()
+```
 
 
 

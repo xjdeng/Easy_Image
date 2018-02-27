@@ -14,6 +14,14 @@ from urllib.error import URLError, HTTPError
 import warnings
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
+try:
+    from . import classify
+except ImportError:
+    try:
+        import classify
+    except ImportError:
+        warnings.warn("Keras isn't installed or is probably improperly installed. You won't be able to classify images.")
+
 mypath = os.path.abspath(__file__)
 dir_path = os.path.dirname(mypath)
 haarpath = dir_path + "/haarcascades/"
@@ -241,6 +249,20 @@ and load that image.
                 raise(NotAnImage)
         else:
             raise(NotAnImage)
+    
+    def classify(self, mod = 'inception'):
+        """
+Classifies the image using an ImageNet model (default: inception) by returning
+a list of tuples of classifications and their respective probabilities.
+
+This require Keras and a Deep Learning backend like Tensorflow (recommended),
+Theano, or Microsoft's CNTK.
+
+See https://keras.io/backend/ on picking a Keras backend.
+        """
+        return classify.classify(self._img, mod)
+    
+    #TODO: store classifications in the EXIF if calling classify() on a EasyImageFile
             
     def detect_faces(self, detector = default_detector):
         """
