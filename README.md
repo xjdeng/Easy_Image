@@ -23,7 +23,7 @@ You'll need to set up a few dependencies before running:
 
 `conda install path.py`
 
-`conda install -c conda-forge numpy opencv dlib Pillow`
+`conda install -c conda-forge numpy opencv dlib Pillow scikit-image`
 
 `pip install piexif imutils face_recognition_models`
 
@@ -33,7 +33,7 @@ Then download and install Easy Facial Recognition:
 
 `cd Easy_Facial_Recognition`
 
-`pip install .`
+`pip install -U .`
 
 ### What can you do with this module?
 

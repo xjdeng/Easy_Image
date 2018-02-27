@@ -4,3 +4,4 @@ piexif>=1.0.13
 Pillow>=4.2.0
 face_recognition_models
 imutils
+scikit-image

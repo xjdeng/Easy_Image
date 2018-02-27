@@ -9,6 +9,8 @@ import numpy as np
 from path import Path as path
 from imutils import face_utils
 import face_recognition_models as frm
+from skimage.io import imread
+from urllib.error import URLError, HTTPError
 
 mypath = os.path.abspath(__file__)
 dir_path = os.path.dirname(mypath)
@@ -83,7 +85,10 @@ in the app you're building; just for your own information.
 
 def load_image(input1):
     if isinstance(input1, str):
-        return EasyImageFile(input1)
+        if input1.startswith("http"):
+            return EasyImage(input1)
+        else:
+            return EasyImageFile(input1)
     elif isinstance(input1, np.ndarray):
         return EasyImage(input1)
     elif isinstance(input1, EasyImage):
@@ -213,12 +218,25 @@ class EasyImage(object):
     """
 Holds a generic image initialized as a numpy.ndarray (like what you'd get if 
 you were to run cv2.imread on a path to an image.)
+
+You can also pass a URL starting with http into the input and it'll download
+and load that image.
     """
     
     def __init__(self, myinput):
         if isinstance(myinput, np.ndarray):
             self.path = None
             self._img = verify_img(myinput)
+        elif isinstance(myinput, str):
+            if myinput.startswith("http"):
+                try:
+                    img = imread(myinput)
+                    self._img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+                    self.path = None
+                except (URLError, HTTPError, AttributeError):
+                    raise(NotAnImage)
+            else:
+                raise(NotAnImage)
         else:
             raise(NotAnImage)
             
