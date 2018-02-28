@@ -14,11 +14,13 @@ theano_file = "weights_theano.16-3.99.hdf5"
 if backend() == "tensorflow":
     modurl = tensorflow_model
     modfile = tensorflow_file
-    default_mod = get_file(modfile, modurl, cache_subdir="models")
+    modhash = '89f56a39a78454e96379348bddd78c0d'
+    default_mod = get_file(modfile, modurl, cache_subdir="models", file_hash=modhash)
 elif backend() == "theano":
     modurl = theano_model
     modfile = theano_file
-    default_mod = get_file(modfile, modurl, cache_subdir="models")
+    modhash = 'd632812726dc28d30db8b1f1c99f20a4'
+    default_mod = get_file(modfile, modurl, cache_subdir="models", file_hash=modhash)
 else:
     default_mod = None
 
@@ -34,3 +36,5 @@ def run(img, mod = default_mod, img_size = 64, depth = 16, k = 8):
     predicted_ages = results[1].dot(ages).flatten()[0]
     return (predicted_genders, predicted_ages)
 
+#TODO: Document the run() function and make another version
+#for lists of faces
