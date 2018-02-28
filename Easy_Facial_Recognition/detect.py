@@ -14,14 +14,6 @@ from urllib.error import URLError, HTTPError
 import warnings
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
-try:
-    from . import classify
-except ImportError:
-    try:
-        import classify
-    except ImportError:
-        warnings.warn("Keras isn't installed or is probably improperly installed. You won't be able to classify images.")
-
 mypath = os.path.abspath(__file__)
 dir_path = os.path.dirname(mypath)
 haarpath = dir_path + "/haarcascades/"
@@ -260,6 +252,11 @@ Theano, or Microsoft's CNTK.
 
 See https://keras.io/backend/ on picking a Keras backend.
         """
+        try:
+            from . import classify
+        except ImportError:
+            import classify
+
         return classify.classify(self._img, mod)
     
     #TODO: store classifications in the EXIF if calling classify() on a EasyImageFile
