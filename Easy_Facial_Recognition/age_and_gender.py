@@ -1,7 +1,10 @@
 #Based off of: https://github.com/yu4u/age-gender-estimation
 import cv2
 import numpy as np
-from wide_resnet import WideResNet
+try:
+    from wide_resnet import WideResNet
+except ImportError:
+    from .wide_resnet import WideResNet
 from keras.backend import backend
 from keras.utils.data_utils import get_file
 
