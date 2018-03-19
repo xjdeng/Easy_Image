@@ -1,9 +1,11 @@
 try:
     from . import exif_json
     from . import compare
+    from . import classify
 except ImportError:
     import exif_json
     import compare
+    import classify
 import copy, cv2, dlib, os
 import numpy as np
 from path import Path as path
@@ -252,10 +254,6 @@ Theano, or Microsoft's CNTK.
 
 See https://keras.io/backend/ on picking a Keras backend.
         """
-        try:
-            from . import classify
-        except ImportError:
-            import classify
 
         return classify.classify(self._img, mod)
     
