@@ -313,6 +313,22 @@ the local disk.  The self.path variable retains the path to the image.
             self._img = verify_img(cv2.imread(mypath))
         else:
             raise(NotAnImage)
+    """
+    def classify(self, mod = 'inception'):
+        test = self.classify_from_exif(mod)
+        if test is None:
+            return []
+        elif len(test) == 0:
+            return self.classify_forced(mod)
+        else:
+            return test
+    """
+    
+    def classify_from_exif(self, mod = 'inception'):
+        pass
+    
+    def classify_forced(self, mod = 'inception'):
+        pass
             
     def detect_faces(self, cvv = None, dlibv = None, detector = default_detector):
         """
