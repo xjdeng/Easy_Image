@@ -10,9 +10,11 @@ from keras.applications import imagenet_utils
 from keras.applications.inception_v3 import preprocess_input
 from keras.preprocessing.image import img_to_array
 from keras.preprocessing.image import load_img
+from keras import backend as K
 import numpy as np
 import cv2
 from PIL import Image as pil_image
+import gc
 
 MODELS = {
 	"vgg16": VGG16,
@@ -56,6 +58,8 @@ def convert_opencv(cv2_im, grayscale=False, target_size=None,
     return img
 
 def classify(img, mod = 'inception'):
+    K.clear_session()
+    gc.collect()
     if mod in ("inception", "xception"):
         inputShape = (299, 299)
         preprocess = preprocess_input
