@@ -23,6 +23,8 @@ lbppath = dir_path + "/lbpcascades/"
 
 default_predictor = dlib.shape_predictor(frm.pose_predictor_model_location())
 
+classify_field = 50706
+
 def convert_rect(myinput0):
     """
 Converts the output from OpenCV's Cascade Classifier to an equivalent
