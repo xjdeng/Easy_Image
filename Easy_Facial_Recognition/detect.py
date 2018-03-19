@@ -24,6 +24,7 @@ lbppath = dir_path + "/lbpcascades/"
 default_predictor = dlib.shape_predictor(frm.pose_predictor_model_location())
 
 classify_field = 50706
+imagenet_model = 'vgg16'
 
 def convert_rect(myinput0):
     """
@@ -246,9 +247,9 @@ and load that image.
         else:
             raise(NotAnImage)
     
-    def classify(self, mod = 'inception'):
+    def classify(self, mod = imagenet_model):
         """
-Classifies the image using an ImageNet model (default: inception) by returning
+Classifies the image using an ImageNet model (default: vgg16) by returning
 a list of tuples of classifications and their respective probabilities.
 
 This require Keras and a Deep Learning backend like Tensorflow (recommended),
@@ -314,7 +315,7 @@ the local disk.  The self.path variable retains the path to the image.
         else:
             raise(NotAnImage)
 
-    def classify(self, mod = 'inception'):
+    def classify(self, mod = imagenet_model):
         #TODO: comments!
         test = self.classify_from_exif(mod)
         if test is None:
@@ -325,7 +326,7 @@ the local disk.  The self.path variable retains the path to the image.
             return test
 
     
-    def classify_from_exif(self, mod = 'inception'):
+    def classify_from_exif(self, mod = imagenet_model):
         #TODO: comments!
         test = exif_json.load(self.path, classify_field)
         if (test is None) or (isinstance(test, list) == False):
@@ -342,7 +343,7 @@ the local disk.  The self.path variable retains the path to the image.
             return test[1]
         
     
-    def classify_forced(self, mod = 'inception'):
+    def classify_forced(self, mod = imagenet_model):
         #TODO: comments!
         classes = super(EasyImageFile, self).classify(mod)
         output = [mod, classes]
