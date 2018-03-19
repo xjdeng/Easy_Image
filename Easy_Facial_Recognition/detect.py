@@ -257,7 +257,7 @@ Theano, or Microsoft's CNTK.
 See https://keras.io/backend/ on picking a Keras backend.
         """
 
-        return classify.classify(self._img, mod)
+        return {a[1] : a[2] for a in classify.classify(self._img, mod)}
     
     #TODO: store classifications in the EXIF if calling classify() on a EasyImageFile
             
