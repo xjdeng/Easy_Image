@@ -7,6 +7,8 @@ except ImportError:
     from .wide_resnet import WideResNet
 from keras.backend import backend
 from keras.utils.data_utils import get_file
+from keras import backend as K
+import gc
 
 #https://superuser.com/questions/470664/how-to-download-dropbox-files-using-wget-command
 tensorflow_model = "https://www.dropbox.com/s/ukm1dxca0vve6gn/weights.18-4.06.hdf5?dl=1"
@@ -29,6 +31,8 @@ else:
 
 
 def run(img, mod = default_mod, img_size = 64, depth = 16, k = 8):
+    K.clear_session()
+    gc.collect()    
     model = WideResNet(img_size, depth=depth, k=k)()
     model.load_weights(mod)
     faces = np.empty((1, img_size, img_size, 3))
