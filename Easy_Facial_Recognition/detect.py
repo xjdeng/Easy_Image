@@ -257,7 +257,7 @@ Theano, or Microsoft's CNTK.
 See https://keras.io/backend/ on picking a Keras backend.
         """
 
-        return {a[1] : a[2] for a in classify.classify(self._img, mod)}
+        return {a[1] : np.float64(a[2]) for a in classify.classify(self._img, mod)}
     
     #TODO: store classifications in the EXIF if calling classify() on a EasyImageFile
             
@@ -313,8 +313,9 @@ the local disk.  The self.path variable retains the path to the image.
             self._img = verify_img(cv2.imread(mypath))
         else:
             raise(NotAnImage)
-    """
+
     def classify(self, mod = 'inception'):
+        #TODO: comments!
         test = self.classify_from_exif(mod)
         if test is None:
             return []
@@ -322,13 +323,31 @@ the local disk.  The self.path variable retains the path to the image.
             return self.classify_forced(mod)
         else:
             return test
-    """
+
     
     def classify_from_exif(self, mod = 'inception'):
-        pass
+        #TODO: comments!
+        test = exif_json.load(self.path, classify_field)
+        if (test is None) or (isinstance(test, list) == False):
+            return {}
+        elif len(test) != 2:
+            return {}
+        elif mod != test[0]:
+            return {}
+        elif isinstance(test[1], dict) == False:
+            return {}
+        elif len(test[1]) == 0:
+            return None
+        else:
+            return test[1]
+        
     
     def classify_forced(self, mod = 'inception'):
-        pass
+        #TODO: comments!
+        classes = super(EasyImageFile, self).classify(mod)
+        output = [mod, classes]
+        exif_json.save(self.path, output, classify_field)
+        return classes
             
     def detect_faces(self, cvv = None, dlibv = None, detector = default_detector):
         """
