@@ -307,9 +307,10 @@ Save the image at the new path: newpath
 Displays the image using OpenCV's imshow
         """
         #https://github.com/opencv/opencv/issues/7343
-        cv2.imshow("", self._img)
+        wname = str(hash(self._img.tostring()))
+        cv2.imshow(wname, self._img)
         key = cv2.waitKey()
-        cv2.destroyAllWindows()
+        cv2.destroyWindow(wname)
         return key
 
 class EasyImageFile(EasyImage):
