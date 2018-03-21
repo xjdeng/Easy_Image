@@ -301,6 +301,16 @@ Returns the image stored in the object in numpy.ndarray format.
 Save the image at the new path: newpath
         """
         return cv2.imwrite(newpath, self._img)
+    
+    def show(self):
+        """
+Displays the image using OpenCV's imshow
+        """
+        #https://github.com/opencv/opencv/issues/7343
+        cv2.imshow("", self._img)
+        key = cv2.waitKey()
+        cv2.destroyAllWindows()
+        return key
 
 class EasyImageFile(EasyImage):
     """
