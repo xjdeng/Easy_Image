@@ -35,7 +35,7 @@ Then download and install Easy Facial Recognition:
 
 `pip install -U .`
 
-##### Optional But Recommended: Keras (for image classification):
+##### Install Keras, now required:
 
 If you don't have Keras, you'll first need to pick a Deep Learning backend for it:
 
