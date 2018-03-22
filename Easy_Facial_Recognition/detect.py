@@ -305,8 +305,9 @@ Save the image at the new path: newpath
 Displays the image using OpenCV's imshow
         """
         #https://github.com/opencv/opencv/issues/7343
-        wname = str(hash(self._img.tostring()))
-        cv2.imshow(wname, self._img)
+        img = self.getimg()
+        wname = str(hash(img.tostring()))
+        cv2.imshow(wname, img)
         key = cv2.waitKey()
         cv2.destroyWindow(wname)
         return key
