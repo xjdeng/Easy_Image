@@ -259,9 +259,7 @@ See https://keras.io/backend/ on picking a Keras backend.
         """
 
         return {a[1] : np.float64(a[2]) for a in classify.classify(self._img, mod)}
-    
-    #TODO: store classifications in the EXIF if calling classify() on a EasyImageFile
-            
+                
     def detect_faces(self, detector = default_detector):
         """
 Returns a list of faces detected in the image; each face is represented using 
@@ -327,7 +325,11 @@ the local disk.  The self.path variable retains the path to the image.
             raise(NotAnImage)
 
     def classify(self, mod = imagenet_model):
-        #TODO: comments!
+        """
+Returns a dictionary with the probabilities that the image of is a particular
+type. It tries to search for classifications in the EXIF data before finally
+doing the classification, in order to save time and computing power.        
+        """
         test = self.classify_from_exif(mod)
         if test is None:
             return []
@@ -338,7 +340,10 @@ the local disk.  The self.path variable retains the path to the image.
 
     
     def classify_from_exif(self, mod = imagenet_model):
-        #TODO: comments!
+        """
+Only get the classifications of the image stored in the EXIF data. If not
+found, return an empty dict. If error, return None. Used primarily with classify()
+        """
         test = exif_json.load(self.path, classify_field)
         if (test is None) or (isinstance(test, list) == False):
             return {}
@@ -355,7 +360,10 @@ the local disk.  The self.path variable retains the path to the image.
         
     
     def classify_forced(self, mod = imagenet_model):
-        #TODO: comments!
+        """
+Ignores the classifications stored in the EXIF and forces a run of the 
+image classification algorithm.     
+        """
         classes = super(EasyImageFile, self).classify(mod)
         output = [mod, classes]
         exif_json.save(self.path, output, classify_field)
