@@ -1,4 +1,4 @@
-# Easy_Facial_Recognition
+# Easy_Image
 
 ### Motivation
 
@@ -11,7 +11,7 @@ There are 2 features that differentiate this library (and my approach) from most
 
 ### Installation
 
-As of now, Easy Facial Recognition has only been tested to run on Windows 10 with Anaconda3 under Python 3.6.  I may test other versions of Python and other OS's in the future and report my results here.  You're also welcome to try it out on other setups - feel free to report any issues here.
+As of now, Easy Image has only been tested to run on Windows 10 with Anaconda3 under Python 3.6.  I may test other versions of Python and other OS's in the future and report my results here.  You're also welcome to try it out on other setups - feel free to report any issues here.
 
 ##### Windows and Mac:
 
@@ -57,9 +57,9 @@ Then install Keras: pip install keras
 
 First, open a terminal or command prompt in a working directory of your choice.  Then run the following to copy some test images to this directory.  **Do this before running any of the following examples!**  Then run the following sections **in order.**
 
-`from Easy_Facial_Recognition import test`
+`from Easy_Image import test`
 
-`import Easy_Facial_Recognition`
+`import Easy_Image`
 
 `test.copytests()`
 
@@ -67,11 +67,11 @@ First, open a terminal or command prompt in a working directory of your choice. 
 
 `import cv2`
 
-`angryimg = Easy_Facial_Recognition.EasyImage(cv2.imread("tests/angry-2191104_640.jpg"))`
+`angryimg = Easy_Image.EasyImage(cv2.imread("tests/angry-2191104_640.jpg"))`
 
 ##### Initialize an image file using the EasyImageFile object:
 
-`woman = Easy_Facial_Recognition.EasyImageFile("tests/woman-3046960_640.jpg")`
+`woman = Easy_Image.EasyImageFile("tests/woman-3046960_640.jpg")`
 
 ##### Detect Faces (EasyImage and EasyImageFile objects):
 
