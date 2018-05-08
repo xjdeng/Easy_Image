@@ -271,7 +271,7 @@ Theano, or Microsoft's CNTK.
 See https://keras.io/backend/ on picking a Keras backend.
         """
 
-        return {a[1] : np.float64(a[2]) for a in classify.classify(self._img, mod)}
+        return {a[1] : np.float64(a[2]) for a in classify.classify(self.getimg(), mod)}
                 
     def detect_faces(self, detector = default_detector):
         """
