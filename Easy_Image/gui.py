@@ -15,10 +15,10 @@ right = 39
 
 def label_images(img_list, attribute_lists):
     flag = cv2.WINDOW_NORMAL
-    attributes = len(attribute_lists)
-    labels = [[]]*attributes
-    i = 0
     images = len(img_list)
+    attributes = len(attribute_lists)
+    labels = [[] for i in range(images)]
+    i = 0
     goahead = False
     while goahead == False:
         img = img_list[i].getimg()
