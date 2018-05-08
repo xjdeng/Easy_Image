@@ -20,10 +20,12 @@ def label_images(img_list, attribute_lists):
     labels = [[] for i in range(images)]
     i = 0
     goahead = False
+    wname = "window"
+    cv2.namedWindow(wname, flag)
     while goahead == False:
         img = img_list[i].getimg()
-        wname = str(hash(img.tostring()))
-        cv2.namedWindow(wname, flag) 
+        #wname = str(hash(img.tostring()))
+
         cv2.imshow(wname, img)
         print("Image {} of {}".format(i+1, images))
         goahead2 = False
@@ -89,12 +91,15 @@ def label_images(img_list, attribute_lists):
                     j += 1
                     if len(labels[i]) == attributes:
                         goahead2 = True
-                        i += 1
-        cv2.destroyWindow(wname)
+                        if i + 1 == images:
+                            goahead = True
+                        else:
+                            i += 1
+    cv2.destroyWindow(wname)
     result = pd.DataFrame()
-    result.index = img_list
     for i in range(attributes):
         result[i] = [l[i] for l in labels]
+    result.index = [i.path for i in img_list]
     return result
             
         
