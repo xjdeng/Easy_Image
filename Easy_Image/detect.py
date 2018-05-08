@@ -103,6 +103,19 @@ def load_image(input1):
     else:
         raise(NotAnImage)
 
+def load_image_dir(mydir, recursive = False):
+    images = []
+    for f in path(mydir).files():
+        try:
+            tmp = EasyImageFile(f)
+            images.append(tmp)
+        except NotAnImage:
+            pass
+    if recursive == True:
+        for d in path(mydir).dirs():
+            images += load_image_dir(d, True)
+    return images
+
 def using_cascades(img, cascPath, minNeighbors = 5, scaleFactor = 1.1,\
                    minSize = (0,0), maxSize = (0,0), *args, **kwargs):
     """
