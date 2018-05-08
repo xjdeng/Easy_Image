@@ -14,6 +14,7 @@ import face_recognition_models as frm
 from skimage.io import imread
 from urllib.error import URLError, HTTPError
 import warnings
+import random
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
 mypath = os.path.abspath(__file__)
@@ -103,17 +104,23 @@ def load_image(input1):
     else:
         raise(NotAnImage)
 
-def load_image_dir(mydir, recursive = False):
+def load_image_dir(mydir, recursive = False, maximgs = None, strout = False):
     images = []
     for f in path(mydir).files():
         try:
             tmp = EasyImageFile(f)
+            if strout == True:
+                tmp = str(f)
             images.append(tmp)
         except NotAnImage:
             pass
     if recursive == True:
         for d in path(mydir).dirs():
-            images += load_image_dir(d, True)
+            images += load_image_dir(d, True, maximgs, strout)
+    if maximgs is not None:
+        if len(images) > maximgs:
+            random.shuffle(images)
+            images = images[0:maximgs]
     return images
 
 def using_cascades(img, cascPath, minNeighbors = 5, scaleFactor = 1.1,\

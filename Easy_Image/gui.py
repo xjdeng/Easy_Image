@@ -22,8 +22,14 @@ def label_images(img_list, attribute_lists):
     goahead = False
     wname = "window"
     cv2.namedWindow(wname, flag)
+    paths = []
     while goahead == False:
-        img = img_list[i].getimg()
+        if isinstance(img_list[i], str):
+            img = cv2.imread(img_list[i])
+            paths.append(img_list[i])
+        else:
+            img = img_list[i].getimg()
+            paths.append(img_list[i].path)
         #wname = str(hash(img.tostring()))
 
         cv2.imshow(wname, img)
@@ -99,7 +105,7 @@ def label_images(img_list, attribute_lists):
     result = pd.DataFrame()
     for i in range(attributes):
         result[i] = [l[i] for l in labels]
-    result.index = [i.path for i in img_list]
+    result.index = paths
     return result
             
         
@@ -111,7 +117,7 @@ def load():
                                          title = "Select Image:")
     return detect.EasyImageFile(imgfile)
 
-def load_dir(recursive = False):
+def load_dir(recursive = False, maximgs = None, strout = False):
     imgdir = filedialog.askdirectory(initialdir = "/",\
                                          title = "Select Directory:")
-    return detect.load_image_dir(imgdir, recursive = recursive)
+    return detect.load_image_dir(imgdir, recursive, maximgs, strout)
