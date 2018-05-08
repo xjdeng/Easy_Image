@@ -313,13 +313,14 @@ Save the image at the new path: newpath
         """
         return cv2.imwrite(newpath, self._img)
     
-    def show(self):
+    def show(self, flag = cv2.WINDOW_NORMAL):
         """
 Displays the image using OpenCV's imshow
         """
         #https://github.com/opencv/opencv/issues/7343
         img = self.getimg()
         wname = str(hash(img.tostring()))
+        cv2.namedWindow(wname, flag) 
         cv2.imshow(wname, img)
         key = cv2.waitKey()
         cv2.destroyWindow(wname)
