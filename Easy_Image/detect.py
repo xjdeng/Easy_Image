@@ -104,24 +104,39 @@ def load_image(input1):
     else:
         raise(NotAnImage)
 
+def get_all_files(folder):
+    f = path(folder)
+    folders = f.dirs()
+    files = f.files()
+    result = files
+    for i in folders:
+        result += get_all_files(i)
+    return result
+
 def load_image_dir(mydir, recursive = False, maximgs = None, strout = False):
+    if recursive == True:
+        files = get_all_files(mydir)
+    else:
+        files = path(mydir).files()
+    random.shuffle(files)
     images = []
-    for f in path(mydir).files():
+    i = 0
+    if maximgs == None:
+        num = len(files)
+    else:
+        num = maximgs
+    while (len(images) < num) & (i < len(files)):
+        test = files[i]
+        i += 1
         try:
-            tmp = EasyImageFile(f)
+            tmp = EasyImageFile(test)
             if strout == True:
-                tmp = str(f)
-            images.append(tmp)
+                images.append(str(tmp.path))
+            else:
+                images.append(tmp)
         except NotAnImage:
             pass
-    if recursive == True:
-        for d in path(mydir).dirs():
-            images += load_image_dir(d, True, maximgs, strout)
-    if maximgs is not None:
-        if len(images) > maximgs:
-            random.shuffle(images)
-            images = images[0:maximgs]
-    return images
+    return images        
 
 def using_cascades(img, cascPath, minNeighbors = 5, scaleFactor = 1.1,\
                    minSize = (0,0), maxSize = (0,0), *args, **kwargs):
