@@ -13,6 +13,8 @@ down = 40
 left = 37
 right = 39
 
+esc = 27
+
 def label_images(img_list, attribute_lists):
     flag = cv2.WINDOW_NORMAL
     images = len(img_list)
@@ -53,6 +55,7 @@ def label_images(img_list, attribute_lists):
                 print("Right Arrow: Next Attribute")
             print("Up Arrow: Next Image")
             print("Down Arrow: Previous Image")
+            print("ESC: Exit and output current results plus remaining.")
             key = cv2.waitKey()
             if key == up:
                 if len(labels[i]) < attributes:
@@ -85,6 +88,13 @@ def label_images(img_list, attribute_lists):
                 else:
                     j += 1
                     goahead2 = True
+            elif key == esc:
+                cv2.destroyWindow(wname)
+                result = pd.DataFrame()
+                for i2 in range(attributes):
+                    result[i2] = [l[i2] for l in labels[0:i]]
+                result.index = paths[0:i]
+                return (result, img_list[i:])
             elif 49 <= key <= 57:
                 idx = key - 49
                 if idx >= choices:
