@@ -105,7 +105,7 @@ def label_images(img_list, attribute_lists):
                     except IndexError:
                         labels[i].append(attribute_lists[j][idx])
                     j += 1
-                    if len(labels[i]) == attributes:
+                    if j == attributes:
                         goahead2 = True
                         if i + 1 == images:
                             goahead = True
