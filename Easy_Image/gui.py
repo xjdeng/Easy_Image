@@ -150,3 +150,27 @@ def slideshow_simple(img_list, delay = 1):
             i += 1
     cv2.destroyWindow(wname)
     return None
+
+def slideshow(img_list, delay = 1, imgfunc = None, *args, **kwargs):
+    wname = "window"
+    cv2.namedWindow(wname, cv2.WINDOW_NORMAL)
+    cv2.imshow(wname, img_list[0].getimg())
+    key = cv2.waitKey()
+    i = 0
+    while i < len(img_list):
+        img = img_list[i].getimg()
+        if imgfunc is None:
+            newimg = img
+        else:
+            newimg = imgfunc(*args, **kwargs)
+        cv2.imshow(wname, newimg)
+        key = cv2.waitKey(1000*delay)
+        if key == esc:
+            cv2.destroyWindow(wname)
+            return None
+        elif (key == left) or (key == 32):
+            i = max(0, i-1)
+        else:
+            i += 1
+    cv2.destroyWindow(wname)
+    return None    
