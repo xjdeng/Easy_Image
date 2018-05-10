@@ -2,7 +2,6 @@ from tkinter import filedialog
 
 import pandas as pd
 import cv2
-import time
 
 try:
     from . import detect
@@ -138,11 +137,16 @@ def slideshow_simple(img_list, delay = 1):
     cv2.namedWindow(wname, cv2.WINDOW_NORMAL)
     cv2.imshow(wname, img_list[0].getimg())
     key = cv2.waitKey()
-    for i in img_list:
-        cv2.imshow(wname, i.getimg())
+    i = 0
+    while i < len(img_list):
+        cv2.imshow(wname, img_list[i].getimg())
         key = cv2.waitKey(1000*delay)
         if key == esc:
             cv2.destroyWindow(wname)
             return None
+        elif (key == left) or (key == 32):
+            i = max(0, i-1)
+        else:
+            i += 1
     cv2.destroyWindow(wname)
     return None
