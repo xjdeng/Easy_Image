@@ -134,15 +134,13 @@ def load_dir(recursive = False, maximgs = None, strout = False):
     return detect.load_image_dir(imgdir, recursive, maximgs, strout)
 
 def slideshow_simple(img_list, delay = 1):
-    flag = cv2.WINDOW_NORMAL
     wname = "window"
-    cv2.namedWindow(wname, flag)
+    cv2.namedWindow(wname, cv2.WINDOW_NORMAL)
     cv2.imshow(wname, img_list[0].getimg())
     key = cv2.waitKey()
     for i in img_list:
         cv2.imshow(wname, i.getimg())
-        key = cv2.waitKey(1)
-        time.sleep(delay)
+        key = cv2.waitKey(1000*delay)
         if key == esc:
             cv2.destroyWindow(wname)
             return None
