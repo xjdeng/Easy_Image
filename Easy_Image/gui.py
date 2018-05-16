@@ -162,7 +162,7 @@ def slideshow(img_list, delay = 1, imgfunc = None, *args, **kwargs):
         if imgfunc is None:
             newimg = img
         else:
-            newimg = imgfunc(*args, **kwargs)
+            newimg = imgfunc(img_list[i], *args, **kwargs)
         cv2.imshow(wname, newimg)
         key = cv2.waitKey(1000*delay)
         if key == esc:
