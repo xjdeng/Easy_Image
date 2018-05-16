@@ -549,6 +549,11 @@ class NotFace(Exception):
     pass
 #TODO: Add more functionality and information to this exception
 
+class EasyImageList(list):
+    
+    def __init__(self, x = None):
+        pass
+
 
 def faces_in_dir(inputdir, detector = default_detector):
     mydir = path(inputdir)
