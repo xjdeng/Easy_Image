@@ -302,9 +302,9 @@ an EasyFace object.
         """
         faces = detector.run(self)
         if len(faces) == 0:
-            return []
+            return EasyFaceList()
         else:
-            return [EasyFace(self, face) for face in faces]
+            return EasyFaceList([EasyFace(self, face) for face in faces])
 
     def draw_faces(self, detector = default_detector, color = (0, 255, 0),\
                    width = 2):
@@ -421,7 +421,7 @@ ignore the faces in the EXIF if the versions don't match.
         """
         test = self.faces_from_exif(cvv, dlibv, detector)
         if test is None:
-            return []
+            return EasyFaceList()
         elif len(test) == 0:
             return self.force_detect_faces(detector)
         else:
@@ -444,16 +444,17 @@ returned.
             detector = detector.to_dict()
         test = exif_json.load(self.path)
         if (test is None) or (isinstance(test, dict) == False):
-            return []
+            return EasyFaceList()
         for x in ['OpenCV Version', 'Dlib Version', 'detector', 'faces']:
             if x not in test.keys():
-                return []
+                return EasyFaceList()
         if (detector is not None) & (detector != test['detector']):
-            return []
+            return EasyFaceList()
         if len(test['faces']) == 0:
             return None
-        return [EasyFace(self, dlib.rectangle(f[0],f[1],f[2],f[3])) for f in\
-                test['faces']]
+        return EasyFaceList([EasyFace(self, dlib.rectangle(f[0],f[1],f[2],\
+                                                           f[3])) for f in\
+                test['faces']])
     
     def force_detect_faces(self, detector = default_detector):
         """
@@ -512,7 +513,7 @@ distance between them, set threshold = None.
             return compare.compare_faces([encoding1], encoding2, threshold)[0] 
     
     def detect_faces(self):
-        return [self]
+        return EasyFaceList([self])
        
     def getimg(self):
         x = self.face.left()
