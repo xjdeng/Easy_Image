@@ -553,6 +553,10 @@ class EasyImageList(list):
     
     def __init__(self, x = None):
         pass
+    
+    def append(self, x):
+        if isinstance(x, EasyImage):
+            super(EasyImageList, self).append(x)
 
 
 def faces_in_dir(inputdir, detector = default_detector):
