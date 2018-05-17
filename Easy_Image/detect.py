@@ -552,9 +552,8 @@ class NotFace(Exception):
 class EasyImageList(list):
     
     def __init__(self, x = None):
-        if isinstance(x, list):
-            for a in x:
-                self.append(a)
+        for a in x:
+            self.append(a)
     
     def __add__(self, x):
         if isinstance(x, EasyImageList):
