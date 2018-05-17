@@ -132,6 +132,11 @@ def load_dir(recursive = False, maximgs = None, strout = False):
                                          title = "Select Directory:")
     return detect.load_image_dir(imgdir, recursive, maximgs, strout)
 
+def load_images():
+    imgfiles = filedialog.askopenfilenames(initialdir = "/",\
+                                         title = "Select Images:")
+    return detect.EasyImageFileList(imgfiles)
+
 def slideshow_simple(img_list, delay = 1):
     wname = "window"
     cv2.namedWindow(wname, cv2.WINDOW_NORMAL)
