@@ -119,7 +119,7 @@ def load_image_dir(mydir, recursive = False, maximgs = None, strout = False):
     else:
         files = path(mydir).files()
     random.shuffle(files)
-    images = []
+    images = EasyImageFileList()
     i = 0
     if maximgs == None:
         num = len(files)
