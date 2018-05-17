@@ -556,6 +556,10 @@ class EasyImageList(list):
             for a in x:
                 self.append(a)
     
+    def __add__(self, x):
+        if isinstance(x, EasyImageList):
+            return EasyImageList(super(EasyImageList, self).__add__(x))
+    
     def __iadd__(self, x):
         if isinstance(x, EasyImageList):
             return super(EasyImageList, self).__iadd__(x)
