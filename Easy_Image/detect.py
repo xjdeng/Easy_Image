@@ -586,7 +586,21 @@ class EasyImageFileList(EasyImageList):
     
     def append(self, x):
         if isinstance(x, EasyImageFile):
-            super(EasyImageFileList, self).append(x) 
+            super(EasyImageFileList, self).append(x)
+
+class EasyFaceList(EasyImageList):
+    
+    def __add__(self, x):
+        if isinstance(x, EasyFaceList):
+            return EasyFaceList(super(EasyFaceList, self).__add__(x))
+    
+    def __iadd__(self, x):
+        if isinstance(x, EasyFaceList):
+            return super(EasyFaceList, self).__iadd__(x)
+    
+    def append(self, x):
+        if isinstance(x, EasyFace):
+            super(EasyFaceList, self).append(x)    
 
 
 def faces_in_dir(inputdir, detector = default_detector):
