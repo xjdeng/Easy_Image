@@ -551,7 +551,7 @@ class NotFace(Exception):
 
 class EasyImageList(list):
     
-    def __init__(self, x = None):
+    def __init__(self, x = []):
         for a in x:
             self.append(a)
     
@@ -566,6 +566,13 @@ class EasyImageList(list):
     def append(self, x):
         if isinstance(x, EasyImage):
             super(EasyImageList, self).append(x)
+
+    def detect_faces(self, detector = default_detector):
+        faces = [i.detect_faces(detector) for i in self]
+        tmp = EasyImageList()
+        for f in faces:
+            tmp += EasyImageList(f)
+        return tmp
 
 
 def faces_in_dir(inputdir, detector = default_detector):
