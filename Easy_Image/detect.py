@@ -569,9 +569,9 @@ class EasyImageList(list):
 
     def detect_faces(self, detector = default_detector):
         faces = [i.detect_faces(detector) for i in self]
-        tmp = EasyImageList()
+        tmp = EasyFaceList()
         for f in faces:
-            tmp += EasyImageList(f)
+            tmp += EasyFaceList(f)
         return tmp
 
 class EasyImageFileList(EasyImageList):
