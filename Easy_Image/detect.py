@@ -587,6 +587,12 @@ class EasyImageFileList(EasyImageList):
     def append(self, x):
         if isinstance(x, EasyImageFile):
             super(EasyImageFileList, self).append(x)
+        else:
+            try:
+                tmp = EasyImageFile(x)
+                super(EasyImageFileList, self).append(tmp)
+            except NotAnImage:
+                pass
 
 class EasyFaceList(EasyImageList):
     
