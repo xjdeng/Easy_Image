@@ -600,7 +600,10 @@ class EasyFaceList(EasyImageList):
     
     def append(self, x):
         if isinstance(x, EasyFace):
-            super(EasyFaceList, self).append(x)    
+            super(EasyFaceList, self).append(x)
+    
+    def detect_faces(self, detector = None):
+        return self
 
 
 def faces_in_dir(inputdir, detector = default_detector):
