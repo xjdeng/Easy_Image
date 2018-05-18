@@ -551,6 +551,11 @@ class NotFace(Exception):
 #TODO: Add more functionality and information to this exception
 
 class EasyImageList(list):
+    """
+This object extends the Python list object but makes it easy to do mass 
+EasyImage operations on all of them like detect_faces(). Other functions
+will be implemented in the future.
+    """
     
     def __init__(self, x = []):
         for a in x:
