@@ -79,4 +79,4 @@ def classify(img, mod = 'inception'):
     return imagenet_utils.decode_predictions(preds)[0]
 
 # TODO 1. Support Internet img inputs in classify()
-# TODO 2. Cache image classifications in EXIF
+# TODO 2. Support classifying multiple images at once.
