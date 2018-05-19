@@ -60,6 +60,13 @@ def convert_opencv(cv2_im, grayscale=False, target_size=None,
 def classify(img, mod = 'inception'):
     K.clear_session()
     gc.collect()
+    img4 = preclassify(img, mod)
+    Network = MODELS[mod]
+    model = Network(weights="imagenet")
+    preds = model.predict(img4)
+    return imagenet_utils.decode_predictions(preds)[0]
+
+def preclassify(img, mod = 'inception'):
     if mod in ("inception", "xception"):
         inputShape = (299, 299)
         preprocess = preprocess_input
@@ -72,11 +79,8 @@ def classify(img, mod = 'inception'):
         img1 = convert_opencv(img, target_size=inputShape)
     img2 = img_to_array(img1)
     img3 = np.expand_dims(img2, axis = 0)
-    img4 = preprocess(img3)
-    Network = MODELS[mod]
-    model = Network(weights="imagenet")
-    preds = model.predict(img4)
-    return imagenet_utils.decode_predictions(preds)[0]
+    return preprocess(img3)
+    
 
 # TODO 1. Support Internet img inputs in classify()
 # TODO 2. Support classifying multiple images at once.
