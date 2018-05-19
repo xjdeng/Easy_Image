@@ -66,6 +66,17 @@ def classify(img, mod = 'inception'):
     preds = model.predict(img4)
     return imagenet_utils.decode_predictions(preds)[0]
 
+def classify_multiple(imglist, mod = 'inception'):
+    K.clear_session()
+    gc.collect()
+    img4 = preclassify(imglist.pop(), mod)
+    for i in imglist:
+        img4 = np.vstack((img4, preclassify(i, mod)))
+    Network = MODELS[mod]
+    model = Network(weights="imagenet")
+    preds = model.predict(img4)
+    return imagenet_utils.decode_predictions(preds)    
+
 def preclassify(img, mod = 'inception'):
     if mod in ("inception", "xception"):
         inputShape = (299, 299)
