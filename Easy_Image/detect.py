@@ -620,6 +620,28 @@ class EasyFaceList(EasyImageList):
     def detect_faces(self, detector = None):
         return self
 
+class ImageFileList(list):
+    
+    def __init__(self, x = []):
+        for a in x:
+            self.append(a)
+    
+    def __add__(self, x):
+        if isinstance(x, str):
+            return ImageFileList(super(ImageFileList, self).__add__(x))
+    
+    def __iadd__(self, x):
+        if isinstance(x, str):
+            return super(ImageFileList, self).__iadd__(x)
+    
+    def append(self, x):
+        if isinstance(x, str):
+            try:
+                EasyImageFile(x)
+                super(ImageFileList, self).append(x)
+            except NotAnImage:
+                pass
+
 
 def faces_in_dir(inputdir, detector = default_detector):
     mydir = path(inputdir)
