@@ -122,7 +122,7 @@ def load_image_dir(mydir, recursive = False, maximgs = None, strout = False):
     if strout == False:
         images = EasyImageFileList()
     else:
-        images = [] #TODO: create a specialized obj for list of image paths
+        images = ImageFileList()
     i = 0
     if maximgs == None:
         num = len(files)
