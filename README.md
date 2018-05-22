@@ -115,5 +115,5 @@ Since the faces were stored using EXIF tags in the file tests/woman-3046960_640.
 angryimg.classify()
 ```
 
-
+The above example uses the implementation from [this blog post on PyImageSearch](https://www.pyimagesearch.com/2017/03/20/imagenet-vggnet-resnet-inception-xception-keras/).
 

@@ -575,7 +575,7 @@ will be implemented in the future.
     def append(self, x):
         if isinstance(x, EasyImage):
             super(EasyImageList, self).append(x)
-
+            
     def detect_faces(self, detector = default_detector):
         faces = [i.detect_faces(detector) for i in self]
         tmp = EasyFaceList()
