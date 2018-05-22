@@ -332,6 +332,12 @@ Returns the image stored in the object in numpy.ndarray format.
         """
         return self._img
     
+    def resize(self, width, height):
+        """
+Resizes the image to the specified width and height
+        """
+        self._img = cv2.resize(self._img, (width, height))
+    
     def save(self,newpath):
         """
 Save the image at the new path: newpath
@@ -582,6 +588,10 @@ will be implemented in the future.
         for f in faces:
             tmp += EasyFaceList(f)
         return tmp
+    
+    def resize(self, width, height):
+        for img in self:
+            img.resize(width, height)
 
 class EasyImageFileList(EasyImageList):
 
