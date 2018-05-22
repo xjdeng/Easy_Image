@@ -589,6 +589,13 @@ will be implemented in the future.
             tmp += EasyFaceList(f)
         return tmp
     
+    def pre_keras(self):
+        output = np.expand_dims(self[0].getimg(), axis=0)
+        for i in range(1, len(self)):
+            output = np.vstack((output, np.expand_dims(self[i].getimg(), \
+                                                       axis=0)))
+        return output
+    
     def resize(self, width, height):
         for img in self:
             img.resize(width, height)
