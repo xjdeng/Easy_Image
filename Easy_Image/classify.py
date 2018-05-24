@@ -78,7 +78,7 @@ Note: imglist is a list of images that haven't been preclassified!
     Network = MODELS[mod]
     model = Network(weights="imagenet")
     preds = model.predict(img4)
-    return imagenet_utils.decode_predictions(preds)
+    return postclassify_multiple(imagenet_utils.decode_predictions(preds))
 
 def classify_multiple_processed(imglist, mod = 'inception'):
     """
@@ -92,10 +92,21 @@ Note: we're assuming all of these images in imglist have been preclassify()'d!
     Network = MODELS[mod]
     model = Network(weights="imagenet")
     preds = model.predict(img4)
-    return imagenet_utils.decode_predictions(preds)
+    return postclassify_multiple(imagenet_utils.decode_predictions(preds))
 
 def postclassify(classified):
     return {a[1] : np.float64(a[2]) for a in classified}
+
+def postclassify_multiple(classified_list):
+    result = {}
+    n = len(classified_list)
+    for c in classified_list:
+        for d in c:
+            try:
+                result[d[1]] += np.float64(d[2])/n
+            except KeyError:
+                result[d[1]] = np.float64(d[2])/n
+    return result
 
 def preclassify(img, mod = 'inception'):
     if mod in ("inception", "xception"):
