@@ -78,6 +78,20 @@ Note: imglist is a list of images that haven't been preclassified!
     Network = MODELS[mod]
     model = Network(weights="imagenet")
     preds = model.predict(img4)
+    return imagenet_utils.decode_predictions(preds)
+
+def classify_multiple_processed(imglist, mod = 'inception'):
+    """
+Note: we're assuming all of these images in imglist have been preclassify()'d!
+    """
+    K.clear_session()
+    gc.collect()
+    img4 = imglist.pop()
+    for i in imglist:
+        img4 = np.vstack((img4, i))
+    Network = MODELS[mod]
+    model = Network(weights="imagenet")
+    preds = model.predict(img4)
     return imagenet_utils.decode_predictions(preds)    
 
 def preclassify(img, mod = 'inception'):
