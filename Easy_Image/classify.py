@@ -64,7 +64,7 @@ def classify(img, mod = 'inception'):
     Network = MODELS[mod]
     model = Network(weights="imagenet")
     preds = model.predict(img4)
-    return imagenet_utils.decode_predictions(preds)[0]
+    return postclassify(imagenet_utils.decode_predictions(preds)[0])
 
 def classify_multiple(imglist, mod = 'inception'):
     """
