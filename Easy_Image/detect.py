@@ -582,6 +582,10 @@ will be implemented in the future.
         if isinstance(x, EasyImage):
             super(EasyImageList, self).append(x)
             
+    def classify(self, mod = imagenet_model):
+        preclassified = [classify.preclassify(i.getimg()) for i in self]
+        return classify.classify_multiple_processed(preclassified)
+            
     def detect_faces(self, detector = default_detector):
         faces = [i.detect_faces(detector) for i in self]
         tmp = EasyFaceList()
