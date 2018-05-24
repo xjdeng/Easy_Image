@@ -67,6 +67,9 @@ def classify(img, mod = 'inception'):
     return imagenet_utils.decode_predictions(preds)[0]
 
 def classify_multiple(imglist, mod = 'inception'):
+    """
+Note: imglist is a list of images that haven't been preclassified!
+    """
     K.clear_session()
     gc.collect()
     img4 = preclassify(imglist.pop(), mod)
