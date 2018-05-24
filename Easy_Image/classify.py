@@ -92,7 +92,10 @@ Note: we're assuming all of these images in imglist have been preclassify()'d!
     Network = MODELS[mod]
     model = Network(weights="imagenet")
     preds = model.predict(img4)
-    return imagenet_utils.decode_predictions(preds)    
+    return imagenet_utils.decode_predictions(preds)
+
+def postclassify(classified):
+    return {a[1] : np.float64(a[2]) for a in classified}
 
 def preclassify(img, mod = 'inception'):
     if mod in ("inception", "xception"):
