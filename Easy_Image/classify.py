@@ -1,16 +1,21 @@
 # Based off of the sample code at:
 # https://www.pyimagesearch.com/2017/03/20/imagenet-vggnet-resnet-inception-xception-keras/
+class NoKeras(ImportError):
+    pass
 
-from keras.applications import ResNet50
-from keras.applications import InceptionV3
-from keras.applications import Xception # TensorFlow ONLY
-from keras.applications import VGG16
-from keras.applications import VGG19
-from keras.applications import imagenet_utils
-from keras.applications.inception_v3 import preprocess_input
-from keras.preprocessing.image import img_to_array
-from keras.preprocessing.image import load_img
-from keras import backend as K
+try:
+    from keras.applications import ResNet50
+    from keras.applications import InceptionV3
+    from keras.applications import Xception # TensorFlow ONLY
+    from keras.applications import VGG16
+    from keras.applications import VGG19
+    from keras.applications import imagenet_utils
+    from keras.applications.inception_v3 import preprocess_input
+    from keras.preprocessing.image import img_to_array
+    from keras.preprocessing.image import load_img
+    from keras import backend as K
+except ImportError:
+    raise(NoKeras)
 import numpy as np
 import cv2
 from PIL import Image as pil_image
@@ -122,7 +127,8 @@ def preclassify(img, mod = 'inception'):
     img2 = img_to_array(img1)
     img3 = np.expand_dims(img2, axis = 0)
     return preprocess(img3)
-    
+
+  
 
 # TODO 1. Support Internet img inputs in classify()
 # TODO 2. Support classifying multiple images at once.

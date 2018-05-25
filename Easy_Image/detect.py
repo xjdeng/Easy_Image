@@ -5,7 +5,10 @@ try:
 except ImportError:
     import exif_json
     import compare
-    import classify
+    try:
+        import classify
+    except ImportError:
+        print("Warning: Keras not found. You will not be able to classify images!")
 import copy, cv2, dlib, os
 import numpy as np
 from path import Path as path
