@@ -665,6 +665,7 @@ class ImageFileList(list):
                 super(ImageFileList, self).append(x)
             except NotAnImage:
                 pass
+            
     def detect_faces(self, detector = None):
         """
 Untested; need to test soon.
@@ -674,6 +675,18 @@ Untested; need to test soon.
             tmp = EasyImageFile(i)
             faces += tmp.detect_faces()
         return faces
+    
+    def resize(self, height, width):
+        """
+Untested; need to test soon.
+        """
+        result = EasyImageList()
+        for f in self:
+            tmp = EasyImage(f)
+            tmp.resize(height, width)
+            result.append(tmp)
+        return result
+            
             
 
 
