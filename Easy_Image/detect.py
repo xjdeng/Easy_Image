@@ -665,6 +665,16 @@ class ImageFileList(list):
                 super(ImageFileList, self).append(x)
             except NotAnImage:
                 pass
+    def detect_faces(self, detector = None):
+        """
+Untested; need to test soon.
+        """
+        faces = EasyFaceList()
+        for i in self:
+            tmp = EasyImageFile(i)
+            faces += tmp.detect_faces()
+        return faces
+            
 
 
 def faces_in_dir(inputdir, detector = default_detector):
