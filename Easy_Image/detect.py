@@ -626,6 +626,14 @@ class EasyImageFileList(EasyImageList):
                 super(EasyImageFileList, self).append(tmp)
             except NotAnImage:
                 pass
+    
+    def classify(self, x):
+        pass
+        #Step 1: check which image files have tags already detected and add to list
+        #Step 2: make another list of files with no tags detected
+        #Step 3: classify images in list in #2
+        #Step 4: cache tags in list in #2
+        #Step 5: combine cached tags with detected tags
 
 class EasyFaceList(EasyImageList):
     
