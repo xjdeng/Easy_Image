@@ -627,10 +627,20 @@ class EasyImageFileList(EasyImageList):
             except NotAnImage:
                 pass
     
-    def classify(self, x):
+    def classify(self, mod = imagenet_model):
         pass
-        #Step 1: check which image files have tags already detected and add to list
-        #Step 2: make another list of files with no tags detected
+        #DONE: Step 1: check which image files have tags already detected and add to list
+        tagged = []
+        notags = []
+        for i in range(0,len(self)):
+            test = self[i].classify_from_exif(mod)
+            if test is not None:
+                if len(test) == 0:
+                    notags.append(i)
+                else:
+                    tagged.append(i)
+            
+        #DONE: Step 2: make another list of files with no tags detected
         #Step 3: classify images in list in #2
         #Step 4: cache tags in list in #2
         #Step 5: combine cached tags with detected tags
