@@ -628,8 +628,9 @@ class EasyImageFileList(EasyImageList):
                 pass
     
     def classify(self, mod = imagenet_model):
-        pass
-        #DONE: Step 1: check which image files have tags already detected and add to list
+        """
+Untested; need to test soon.
+        """
         tagged = []
         notags = []
         classifications = []
@@ -641,12 +642,24 @@ class EasyImageFileList(EasyImageList):
                 else:
                     tagged.append(i)
                     classifications.append(test)
+        n1 = len(classifications)
+        class1 = classify.postclassify_multiple(classifications)
+        notag_images = EasyImageList([self[i] for i in notags])
+        n2 = len(notag_images)
+        class2 = notag_images.classify(mod)
+        result = {}
+        for k in class1.keys():
+            try:
+                result[k] += class1[k]*n1/(n1+n2)
+            except KeyError:
+                result[k] = class1[k]*n1/(n1+n2)
+        for k in class2.keys():
+            try:
+                result[k] += class2[k]*n2/(n1+n2)
+            except KeyError:
+                result[k] = class2[k]*n2/(n1+n2)
             
-        #DONE: Step 2: make another list of files with no tags detected
-        #Step 3: classify images in list in #2
-        
-        #Step 4: cache tags in list in #2
-        #Step 5: combine cached tags with detected tags
+        return result
 
 class EasyFaceList(EasyImageList):
     
