@@ -510,7 +510,7 @@ representing the faces as its constructors.
         else:
             raise(NotFace)
             
-    def compare_face(self, face, threshold = 0.6):
+    def compare_face(self, face, threshold = 0.5):
         """
 Compares 2 faces, seeing whether they're the same person. If you want the actual
 distance between them, set threshold = None.
