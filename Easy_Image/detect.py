@@ -631,6 +631,7 @@ class EasyImageFileList(EasyImageList):
         """
 Untested; need to test soon.
         """
+        #TODO: Test this function
         tagged = []
         notags = []
         classifications = []
@@ -704,6 +705,7 @@ class ImageFileList(list):
         """
 Untested; need to test soon.
         """
+        #TODO: Test this function
         faces = EasyFaceList()
         for i in self:
             tmp = EasyImageFile(i)
@@ -714,6 +716,7 @@ Untested; need to test soon.
         """
 Untested; need to test soon.
         """
+        #TODO: Test this function
         result = EasyImageList()
         for f in self:
             tmp = EasyImage(f)
