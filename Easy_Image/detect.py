@@ -628,10 +628,6 @@ class EasyImageFileList(EasyImageList):
                 pass
     
     def classify(self, mod = imagenet_model):
-        """
-Untested; need to test soon.
-        """
-        #TODO: Test this function
         tagged = []
         notags = []
         classifications = []
@@ -713,10 +709,6 @@ Untested; need to test soon.
         return faces
     
     def resize(self, height, width):
-        """
-Untested; need to test soon.
-        """
-        #TODO: Test this function
         result = EasyImageList()
         for f in self:
             tmp = EasyImage(f)
