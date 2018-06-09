@@ -89,6 +89,8 @@ def classify_multiple_processed(imglist, mod = 'inception'):
     """
 Note: we're assuming all of these images in imglist have been preclassify()'d!
     """
+    if len(imglist) == 0:
+        return []
     K.clear_session()
     gc.collect()
     img4 = imglist.pop()
@@ -104,13 +106,16 @@ def postclassify(classified):
 
 def postclassify_multiple(classified_list):
     result = {}
-    n = len(classified_list)
+    tot = 0
+    for c in classified_list:
+        for d in c:
+            tot += np.float64(d[2])
     for c in classified_list:
         for d in c:
             try:
-                result[d[1]] += np.float64(d[2])/n
+                result[d[1]] += np.float64(d[2])/tot
             except KeyError:
-                result[d[1]] = np.float64(d[2])/n
+                result[d[1]] = np.float64(d[2])/tot
     return result
 
 def preclassify(img, mod = 'inception'):
