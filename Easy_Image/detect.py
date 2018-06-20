@@ -606,6 +606,17 @@ will be implemented in the future.
     def resize(self, width, height):
         for img in self:
             img.resize(width, height)
+            
+    def search(self, word):
+        imgs = []
+        for img in self:
+            classes = img.classify() #TODO: Batch and classify multiple images together
+            if word in classes.keys():
+                imgs.append((img, classes[word]))
+        return sorted(imgs, key=lambda x: x[1], reverse = True)
+        
+        
+        
 
 class EasyImageFileList(EasyImageList):
 
