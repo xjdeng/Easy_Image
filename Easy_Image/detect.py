@@ -607,6 +607,16 @@ will be implemented in the future.
         for img in self:
             img.resize(width, height)
             
+    def save(self, folder = "./", root = "image"):
+        n = len(self)
+        digits = int(np.log10(n)) +1
+        results = EasyImageFileList()
+        for i in range(n):
+            newpath = folder + "/" + root + str(i).zfill(digits) + ".jpg"
+            self[i].save(newpath)
+            results.append(EasyImageFile(newpath))
+        return results
+            
     def search(self, word):
         imgs = []
         for img in self:
