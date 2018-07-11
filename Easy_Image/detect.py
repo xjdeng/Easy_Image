@@ -608,9 +608,16 @@ will be implemented in the future.
                                                        axis=0)))
         return output
     
-    def resize(self, width, height):
-        for img in self:
-            img.resize(width, height)
+    def resize(self, width, height, inplace = True):
+        if inplace == True:
+            for img in self:
+                img.resize(width, height, True)
+            return self
+        else:
+            newlist = EasyImageList()
+            for img in self:
+                newlist.append(img.resize(width, height, False))
+            return newlist
             
     def save(self, folder = "./", root = "image"):
         n = len(self)
