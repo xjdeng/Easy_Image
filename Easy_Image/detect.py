@@ -335,11 +335,16 @@ Returns the image stored in the object in numpy.ndarray format.
         """
         return self._img
     
-    def resize(self, width, height):
+    def resize(self, width, height, inplace = True):
         """
 Resizes the image to the specified width and height
         """
-        self._img = cv2.resize(self._img, (width, height))
+        newimg = cv2.resize(self._img, (width, height))
+        if inplace == True:
+            self._img = newimg
+            return self
+        else:
+            return EasyImage(newimg)
     
     def save(self,newpath):
         """
