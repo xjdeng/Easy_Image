@@ -18,6 +18,8 @@ from skimage.io import imread
 from urllib.error import URLError, HTTPError
 import warnings
 import random
+from sklearn.preprocessing import StandardScaler
+from sklearn.cluster import DBSCAN
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
 mypath = os.path.abspath(__file__)
@@ -593,6 +595,26 @@ will be implemented in the future.
     def classify(self, mod = imagenet_model):
         preclassified = [classify.preclassify(i.getimg()) for i in self]
         return classify.classify_multiple_processed(preclassified)
+    
+    def cluster(self, width = 30, height = 30, factor = 1.33):
+        # This often doesn't work, do not use for now!!!
+        newimgs = self.resize(width, height, inplace = False)
+        g = newimgs[0].getimg().flatten()
+        for i in range(1, len(newimgs)):
+            g = np.vstack((g, newimgs[i].getimg().flatten()))
+        ss = StandardScaler()
+        g = ss.fit_transform(g)
+        model = DBSCAN(round(factor*len(newimgs)))
+        clusters = model.fit_predict(g)
+        n_clusters = max(clusters)
+        results = []
+        for i in range(0, n_clusters + 1):
+            results.append(self.__class__())
+        for i,c in enumerate(clusters):
+            results[clusters[c]].append(self[i])
+        return results
+        
+        
             
     def detect_faces(self, detector = default_detector):
         faces = [i.detect_faces(detector) for i in self]
@@ -707,6 +729,14 @@ class EasyFaceList(EasyImageList):
     
     def detect_faces(self, detector = None):
         return self
+    
+    def resize(self, width, height, inplace = False): #inplace is a dummy
+        results = EasyImageList()
+        for face in self:
+            img = EasyImage(face.getimg())
+            img.resize(width, height, inplace = True)
+            results.append(img)
+        return results
 
 class ImageFileList(list):
     
