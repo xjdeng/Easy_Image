@@ -596,7 +596,7 @@ will be implemented in the future.
         preclassified = [classify.preclassify(i.getimg()) for i in self]
         return classify.classify_multiple_processed(preclassified)
     
-    def cluster(self, width = 30, height = 30, factor = 1.33):
+    def cluster(self, width = 30, height = 30, factor = 1.33, debug = False):
         # This often doesn't work, do not use for now!!!
         newimgs = self.resize(width, height, inplace = False)
         g = newimgs[0].getimg().flatten()
@@ -606,13 +606,16 @@ will be implemented in the future.
         g = ss.fit_transform(g)
         model = DBSCAN(round(factor*len(newimgs)))
         clusters = model.fit_predict(g)
-        n_clusters = max(clusters)
+        n_clusters = max(0, max(clusters))
         results = []
         for i in range(0, n_clusters + 1):
             results.append(self.__class__())
         for i,c in enumerate(clusters):
-            results[clusters[c]].append(self[i])
-        return results
+            results[c].append(self[i])
+        if debug == True:
+            return (results, clusters)
+        else:
+            return results
         
         
             
