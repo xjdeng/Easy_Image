@@ -613,7 +613,7 @@ will be implemented in the future.
         for i,c in enumerate(clusters):
             results[c].append(self[i])
         if debug == True:
-            return (results, clusters)
+            return (results, clusters, model)
         else:
             return results
     
@@ -633,7 +633,7 @@ will be implemented in the future.
         for i,c in enumerate(clusters):
             results[c].append(self[i])
         if debug == True:
-            return (results, clusters)
+            return (results, clusters, model)
         else:
             return results        
         
