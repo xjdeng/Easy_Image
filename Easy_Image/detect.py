@@ -19,7 +19,7 @@ from urllib.error import URLError, HTTPError
 import warnings
 import random
 from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import DBSCAN
+from sklearn.cluster import DBSCAN, KMeans
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
 mypath = os.path.abspath(__file__)
@@ -616,7 +616,26 @@ will be implemented in the future.
             return (results, clusters)
         else:
             return results
-        
+    
+    def kmeans(self, n_clusters, width = 30, height = 30, debug = False):
+        newimgs = self.resize(width, height, inplace = False)
+        g = newimgs[0].getimg().flatten()
+        for i in range(1, len(newimgs)):
+            g = np.vstack((g, newimgs[i].getimg().flatten()))
+        ss = StandardScaler()
+        g = ss.fit_transform(g)        
+        model = KMeans(n_clusters = n_clusters)
+        clusters = model.fit_predict(g)
+        n_clusters = max(0, max(clusters))
+        results = []
+        for i in range(0, n_clusters + 1):
+            results.append(self.__class__())
+        for i,c in enumerate(clusters):
+            results[c].append(self[i])
+        if debug == True:
+            return (results, clusters)
+        else:
+            return results        
         
             
     def detect_faces(self, detector = default_detector):
