@@ -18,7 +18,6 @@ from skimage.io import imread
 from urllib.error import URLError, HTTPError
 import warnings
 import random
-from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
@@ -602,8 +601,7 @@ will be implemented in the future.
         g = newimgs[0].getimg().flatten()
         for i in range(1, len(newimgs)):
             g = np.vstack((g, newimgs[i].getimg().flatten()))
-        ss = StandardScaler()
-        g = ss.fit_transform(g)        
+        g = g / 255.0       
         model = KMeans(n_clusters = n_clusters)
         clusters = model.fit_predict(g)
         n_clusters = max(0, max(clusters))
@@ -625,8 +623,6 @@ will be implemented in the future.
         g = newimgs[0].getimg().flatten()
         for i in range(1, len(newimgs)):
             g = np.vstack((g, newimgs[i].getimg().flatten()))
-        ss = StandardScaler()
-        g = ss.fit_transform(g)
         best_n, best_s = (1, -2)
         for i in range(min_clusters, max_clusters + 1):
             model = KMeans(n_clusters = i)
