@@ -20,6 +20,7 @@ import warnings
 import random
 from sklearn.preprocessing import StandardScaler
 from sklearn.cluster import DBSCAN, KMeans
+from sklearn.metrics import silhouette_score
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
 mypath = os.path.abspath(__file__)
@@ -625,6 +626,34 @@ will be implemented in the future.
         ss = StandardScaler()
         g = ss.fit_transform(g)        
         model = KMeans(n_clusters = n_clusters)
+        clusters = model.fit_predict(g)
+        n_clusters = max(0, max(clusters))
+        results = []
+        for i in range(0, n_clusters + 1):
+            results.append(self.__class__())
+        for i,c in enumerate(clusters):
+            results[c].append(self[i])
+        if debug == True:
+            return (results, clusters, model)
+        else:
+            return results
+    
+    def cluster_smart(self, min_clusters = 2, max_clusters = 100, width = 30,\
+                      height = 30, debug = False):
+        newimgs = self.resize(width, height, inplace = False)
+        g = newimgs[0].getimg().flatten()
+        for i in range(1, len(newimgs)):
+            g = np.vstack((g, newimgs[i].getimg().flatten()))
+        ss = StandardScaler()
+        g = ss.fit_transform(g)
+        best_n, best_s = (1, -2)
+        for i in range(min_clusters, min(max_clusters+1, len(newimgs) - 1)):
+            model = KMeans(n_clusters = i)
+            test = model.fit_predict(g)
+            score = silhouette_score(g, test)
+            if score > best_s:
+                best_n, best_s = (i, score)
+        model = KMeans(n_clusters = best_n)
         clusters = model.fit_predict(g)
         n_clusters = max(0, max(clusters))
         results = []
