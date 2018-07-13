@@ -638,16 +638,18 @@ will be implemented in the future.
         else:
             return results
     
-    def cluster_smart(self, min_clusters = 2, max_clusters = 100, width = 30,\
+    def cluster_smart(self, min_clusters = 2, max_clusters = None, width = 30,\
                       height = 30, debug = False):
         newimgs = self.resize(width, height, inplace = False)
+        if max_clusters is None:
+            max_clusters = len(newimgs) - 2
         g = newimgs[0].getimg().flatten()
         for i in range(1, len(newimgs)):
             g = np.vstack((g, newimgs[i].getimg().flatten()))
         ss = StandardScaler()
         g = ss.fit_transform(g)
         best_n, best_s = (1, -2)
-        for i in range(min_clusters, min(max_clusters+1, len(newimgs) - 1)):
+        for i in range(min_clusters, max_clusters + 1):
             model = KMeans(n_clusters = i)
             test = model.fit_predict(g)
             score = silhouette_score(g, test)
