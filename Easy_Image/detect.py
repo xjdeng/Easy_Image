@@ -144,7 +144,17 @@ def load_image_dir(mydir, recursive = False, maximgs = None, strout = False):
                 images.append(tmp)
         except NotAnImage:
             pass
-    return images        
+    return images
+
+def from_urls(urls):
+    images = EasyImageList()
+    for u in urls:
+        try:
+            img = EasyImage(u)
+            images.append(img)
+        except NotAnImage:
+            pass
+    return images
 
 def using_cascades(img, cascPath, minNeighbors = 5, scaleFactor = 1.1,\
                    minSize = (0,0), maxSize = (0,0), *args, **kwargs):
@@ -277,7 +287,9 @@ and load that image.
         if isinstance(myinput, np.ndarray):
             self.path = None
             self._img = verify_img(myinput)
-        elif isinstance(myinput, str):
+        elif (isinstance(myinput, str)) or (isinstance(myinput, bytes)):
+            if isinstance(myinput, bytes):
+                myinput = myinput.decode('ascii','ignore')
             if myinput.startswith("http"):
                 try:
                     img = imread(myinput)
