@@ -8,6 +8,10 @@ import warnings
 
 cache_filename = "pixabay_cache.pkl"
 
+api_key = None
+cache_update_interval = 3600
+cache_expiry = 24*3600
+
 def cache_path():
     return tempfile.gettempdir() + "/" + cache_filename
 
@@ -25,9 +29,7 @@ except IOError:
     cache = create_cache()
 
 
-api_key = None
-cache_update_interval = 3600
-cache_expiry = 24*3600
+
 
 def update_api_key(): 
     try:
@@ -52,3 +54,4 @@ def update_cache(key, value):
                 del cache[k]
     if time.time() - cache['last_saved'] > cache_update_interval:
         joblib.dump(cache, cache_path())
+        cache['last_saved'] = time.time()
