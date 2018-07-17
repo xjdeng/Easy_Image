@@ -19,6 +19,7 @@ from urllib.error import URLError, HTTPError
 import warnings
 import random
 from sklearn.cluster import KMeans
+from sklearn.mixture import GaussianMixture as GMM
 from sklearn.metrics import silhouette_score
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
@@ -653,8 +654,39 @@ will be implemented in the future.
         if debug == True:
             return (results, clusters, model)
         else:
+            return results
+    
+    def cluster_gmm_smart(self, min_clusters = 2, max_clusters = None, width = 30,\
+                      height = 30, debug = False):
+        """
+BETA. Very slow and inaccurate right now.
+        """
+        newimgs = self.resize(width, height, inplace = False)
+        if max_clusters is None:
+            max_clusters = len(newimgs) - 2
+        g = newimgs[0].getimg().flatten()
+        for i in range(1, len(newimgs)):
+            g = np.vstack((g, newimgs[i].getimg().flatten()))
+        best_n, best_s = (1, 999999999)
+        for i in range(min_clusters, max_clusters + 1):
+            model = GMM(n_components = i)
+            model.fit(g)
+            score = model.bic(g)
+            if score < best_s:
+                best_n, best_s = (i, score)
+        model = GMM(n_components = best_n)
+        model.fit(g)
+        clusters = model.predict(g)
+        n_clusters = max(0, max(clusters))
+        results = []
+        for i in range(0, n_clusters + 2):
+            results.append(self.__class__())
+        for i,c in enumerate(clusters):
+            results[c].append(self[i])
+        if debug == True:
+            return (results, clusters, model)
+        else:
             return results        
-        
             
     def detect_faces(self, detector = default_detector):
         faces = [i.detect_faces(detector) for i in self]
