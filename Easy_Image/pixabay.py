@@ -31,9 +31,11 @@ except IOError:
 
 
 
-def update_api_key(): 
+def update_api_key():
+    global api_key
     try:
-        api_key = os.environ['PIXABAY_API_KEY']
+        if api_key is None:
+            api_key = os.environ['PIXABAY_API_KEY']
     except KeyError:
         message = """Pixabay API key not found.  Please get your key at 
 https://pixabay.com/api/docs/ and either set it in your OS's PIXABAY_API_KEY 
@@ -43,6 +45,7 @@ environment variable or set it by calling the set_key() function.""".replace("\n
 update_api_key()
 
 def set_key(key):
+    global api_key
     api_key = key
 
 def update_cache(key, value):
