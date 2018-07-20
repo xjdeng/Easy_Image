@@ -5,13 +5,14 @@ from sklearn.externals import joblib
 import os
 import time
 import warnings
+import json
 
 cache_filename = "pixabay_cache.pkl"
 
 api_key = None
 cache_update_interval = 3600
 cache_expiry = 24*3600
-cache = None
+cache = {}
 
 def cache_path():
     return tempfile.gettempdir() + "/" + cache_filename
@@ -44,6 +45,16 @@ environment variable or set it by calling the set_key() function.""".replace("\n
         warnings.warn(message)
 
 update_api_key()
+
+def query(*args, **kwargs):
+    try:
+        return cache[(args, json.dumps(kwargs))]
+    except KeyError:
+        update_api_key()
+        pix = python_pixabay.Pixabay(api_key)
+        results = pix.image_search(*args, **kwargs)
+        update_cache((args, json.dumps(kwargs)), results)
+        return results
 
 def set_key(key):
     global api_key
