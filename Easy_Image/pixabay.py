@@ -11,6 +11,7 @@ cache_filename = "pixabay_cache.pkl"
 api_key = None
 cache_update_interval = 3600
 cache_expiry = 24*3600
+cache = None
 
 def cache_path():
     return tempfile.gettempdir() + "/" + cache_filename
@@ -49,6 +50,7 @@ def set_key(key):
     api_key = key
 
 def update_cache(key, value):
+    global cache
     cache[key] = (value, time.time())
     for k in cache.keys():
         tmp = cache[k]
