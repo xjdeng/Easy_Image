@@ -48,7 +48,7 @@ update_api_key()
 
 def query(*args, **kwargs):
     try:
-        return cache[(args, json.dumps(kwargs))]
+        return cache[(args, json.dumps(kwargs))][0]
     except KeyError:
         update_api_key()
         pix = python_pixabay.Pixabay(api_key)
