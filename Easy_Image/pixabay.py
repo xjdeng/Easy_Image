@@ -46,6 +46,9 @@ environment variable or set it by calling the set_key() function.""".replace("\n
 
 update_api_key()
 
+def images_from_query(myquery, imgtype = "largeImageURL"):
+    return [m[imgtype] for m in  myquery['hits']]
+
 def query(*args, **kwargs):
     try:
         return cache[(args, json.dumps(kwargs))][0]
