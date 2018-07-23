@@ -1,6 +1,5 @@
 import python_pixabay
 import tempfile
-from path import Path as path
 from sklearn.externals import joblib
 import os
 import time
