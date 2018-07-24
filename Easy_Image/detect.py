@@ -784,6 +784,9 @@ class EasyImageFileList(EasyImageList):
                 result[k] = class2[k]*n2/(n1+n2)
             
         return result
+    
+    def remove_faces(self):
+        [img.remove_faces() for img in self]
 
 class EasyFaceList(EasyImageList):
     
