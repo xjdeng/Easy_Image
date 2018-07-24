@@ -55,6 +55,8 @@ Then install Keras: pip install keras
 
 ### What can you do with this module?
 
+Note: here's a [Youtube Video](https://www.youtube.com/watch?v=OVtqR4F4z8I) I made on detecting and caching faces using this module.
+
 First, open a terminal or command prompt in a working directory of your choice.  Then run the following to copy some test images to this directory.  **Do this before running any of the following examples!**  Then run the following sections **in order.**
 
 `from Easy_Image import test`
