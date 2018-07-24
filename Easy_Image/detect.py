@@ -21,6 +21,7 @@ import random
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture as GMM
 from sklearn.metrics import silhouette_score
+from matplotlib import pyplot as plt
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
 mypath = os.path.abspath(__file__)
@@ -349,6 +350,12 @@ drawn around the faces (at least in the default option.)
 Returns the image stored in the object in numpy.ndarray format.
         """
         return self._img
+    
+    def plot(self):
+        """
+Like show() but plots the image using Matplotlib
+        """
+        plt.imshow(cv2.cvtColor(self.getimg(), cv2.COLOR_BGR2RGB))
     
     def resize(self, width, height, inplace = True):
         """
