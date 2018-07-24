@@ -612,9 +612,9 @@ will be implemented in the future.
         if isinstance(x, EasyImage):
             super(EasyImageList, self).append(x)
             
-    def classify(self, mod = imagenet_model):
-        preclassified = [classify.preclassify(i.getimg()) for i in self]
-        return classify.classify_multiple_processed(preclassified)
+    def classify(self, mod = imagenet_model, separate = False):
+        preclassified = [classify.preclassify(i.getimg(), mod) for i in self]
+        return classify.classify_multiple_processed(preclassified, mod, separate)
     
     def cluster(self, n_clusters, width = 30, height = 30, debug = False):
         newimgs = self.resize(width, height, inplace = False)
@@ -789,6 +789,7 @@ class EasyImageFileList(EasyImageList):
                 result[k] += class2[k]*n2/(n1+n2)
             except KeyError:
                 result[k] = class2[k]*n2/(n1+n2)
+            
             
         return result
     

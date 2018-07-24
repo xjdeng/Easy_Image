@@ -85,7 +85,7 @@ Note: imglist is a list of images that haven't been preclassified!
     preds = model.predict(img4)
     return postclassify_multiple(imagenet_utils.decode_predictions(preds))
 
-def classify_multiple_processed(imglist, mod = 'inception'):
+def classify_multiple_processed(imglist, mod = 'inception', separate = False):
     """
 Note: we're assuming all of these images in imglist have been preclassify()'d!
     """
@@ -99,24 +99,33 @@ Note: we're assuming all of these images in imglist have been preclassify()'d!
     Network = MODELS[mod]
     model = Network(weights="imagenet")
     preds = model.predict(img4)
-    return postclassify_multiple(imagenet_utils.decode_predictions(preds))
+    return postclassify_multiple(imagenet_utils.decode_predictions(preds), separate)
 
 def postclassify(classified):
     return {a[1] : np.float64(a[2]) for a in classified}
 
-def postclassify_multiple(classified_list):
-    result = {}
-    tot = 0
-    for c in classified_list:
-        for d in c:
-            tot += np.float64(d[2])
-    for c in classified_list:
-        for d in c:
-            try:
-                result[d[1]] += np.float64(d[2])/tot
-            except KeyError:
-                result[d[1]] = np.float64(d[2])/tot
-    return result
+def postclassify_multiple(classified_list, separate = False):
+    if separate == False:
+        result = {}
+        tot = 0
+        for c in classified_list:
+            for d in c:
+                tot += np.float64(d[2])
+        for c in classified_list:
+            for d in c:
+                try:
+                    result[d[1]] += np.float64(d[2])/tot
+                except KeyError:
+                    result[d[1]] = np.float64(d[2])/tot
+        return result
+    else:
+        result = []
+        for c in classified_list:
+            tmp = {}
+            for d in c:
+                tmp[d[1]] = np.float64(d[2])
+            result.append(tmp)
+        return result
 
 def preclassify(img, mod = 'inception'):
     if mod in ("inception", "xception"):
