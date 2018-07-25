@@ -20,7 +20,7 @@ import numpy as np
 import cv2
 from PIL import Image as pil_image
 import gc
-
+#TODO: Implement Fast.ai GPU memory release
 MODELS = {
 	"vgg16": VGG16,
 	"vgg19": VGG19,
