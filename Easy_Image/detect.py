@@ -761,7 +761,11 @@ class EasyImageFileList(EasyImageList):
             except NotAnImage:
                 pass
     
-    def classify(self, mod = imagenet_model):
+    def classify(self, mod = imagenet_model, separate = False):
+        """
+        separate = False: return the classifications for all of the images in aggregate
+        separate = True: return classifications for each image separately
+        """
         tagged = []
         notags = []
         classifications = []
@@ -774,24 +778,34 @@ class EasyImageFileList(EasyImageList):
                     tagged.append(i)
                     classifications.append(test)
         n1 = len(classifications)
-        class1 = classify.postclassify_multiple(classifications)
+        class1 = classify.postclassify_multiple(classifications, separate)
+        #TODO: Fix bug when image already has tags and separate = True
         notag_images = EasyImageList([self[i] for i in notags])
         n2 = len(notag_images)
-        class2 = notag_images.classify(mod)
-        result = {}
-        for k in class1.keys():
-            try:
-                result[k] += class1[k]*n1/(n1+n2)
-            except KeyError:
-                result[k] = class1[k]*n1/(n1+n2)
-        for k in class2.keys():
-            try:
-                result[k] += class2[k]*n2/(n1+n2)
-            except KeyError:
-                result[k] = class2[k]*n2/(n1+n2)
+        class2 = notag_images.classify(mod, separate)
+        if separate == False:
+            result = {}
+            for k in class1.keys():
+                try:
+                    result[k] += class1[k]*n1/(n1+n2)
+                except KeyError:
+                    result[k] = class1[k]*n1/(n1+n2)
+            for k in class2.keys():
+                try:
+                    result[k] += class2[k]*n2/(n1+n2)
+                except KeyError:
+                    result[k] = class2[k]*n2/(n1+n2)
+                
+                
+            return result
+        else:
             
-            
-        return result
+            result = [None]*len(self)
+            for i,j in enumerate(tagged):
+                result[j] = class1[i]
+            for i,j in enumerate(notags):
+                result[j] = class2[i]
+            return result
     
     def remove_faces(self):
         [img.remove_faces() for img in self]
