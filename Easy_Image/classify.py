@@ -19,7 +19,7 @@ except ImportError:
 import numpy as np
 import cv2
 from PIL import Image as pil_image
-import gc
+
 #TODO: Implement Fast.ai GPU memory release
 MODELS = {
 	"vgg16": VGG16,
@@ -34,6 +34,13 @@ _PIL_INTERPOLATION_METHODS = {
     'bilinear': pil_image.BILINEAR,
     'bicubic': pil_image.BICUBIC,
 }
+
+def clean():
+    #http://forums.fast.ai/t/tip-clear-tensorflow-gpu-memory/1979
+    K.get_session().close()
+    cfg = K.tf.ConfigProto()
+    cfg.gpu_options.allow_growth = True
+    K.set_session(K.tf.Session(config=cfg))
 
 def convert_opencv(cv2_im, grayscale=False, target_size=None,
              interpolation='nearest'):
@@ -63,8 +70,7 @@ def convert_opencv(cv2_im, grayscale=False, target_size=None,
     return img
 
 def classify(img, mod = 'inception'):
-    K.clear_session()
-    gc.collect()
+    clean()
     img4 = preclassify(img, mod)
     Network = MODELS[mod]
     model = Network(weights="imagenet")
@@ -75,8 +81,7 @@ def classify_multiple(imglist, mod = 'inception'):
     """
 Note: imglist is a list of images that haven't been preclassified!
     """
-    K.clear_session()
-    gc.collect()
+    clean()
     img4 = preclassify(imglist.pop(), mod)
     for i in imglist:
         img4 = np.vstack((img4, preclassify(i, mod)))
@@ -91,8 +96,7 @@ Note: we're assuming all of these images in imglist have been preclassify()'d!
     """
     if len(imglist) == 0:
         return []
-    K.clear_session()
-    gc.collect()
+    clean()
     img4 = imglist.pop()
     for i in imglist:
         img4 = np.vstack((img4, i))
