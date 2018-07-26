@@ -1,3 +1,4 @@
+from path import Path as path
 import python_pixabay
 import tempfile
 from sklearn.externals import joblib
@@ -44,6 +45,9 @@ environment variable or set it by calling the set_key() function.""".replace("\n
         warnings.warn(message)
 
 update_api_key()
+
+def download_query(myquery, imgtype = "largeImageURL"):
+    pass
 
 def images_from_query(myquery, imgtype = "largeImageURL"):
     return [m[imgtype] for m in  myquery['hits']]
