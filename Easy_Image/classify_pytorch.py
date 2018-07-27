@@ -31,6 +31,12 @@ labels = {int(key):value for (key, value) in raw_labels.items()}
 def best_prediction(raw):
     return labels[raw.argmax()]
 
+def classify(cv2_img, mod = None):
+    img_pil = cv2_to_PIL(cv2_img)
+    raw = PIL_to_raw(img_pil)
+    preds = raw[0]
+    return decode_predictions(preds)
+
 def cv2_to_PIL(cv2_im):
     tmp = cv2.cvtColor(cv2_im,cv2.COLOR_BGR2RGB)
     pil_im = Image.fromarray(tmp)
