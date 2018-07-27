@@ -28,6 +28,9 @@ raw_label_f.close()
 
 labels = {int(key):value for (key, value) in raw_labels.items()}
 
+def best_prediction(raw):
+    return labels[raw.argmax()]
+
 def cv2_to_PIL(cv2_im):
     tmp = cv2.cvtColor(cv2_im,cv2.COLOR_BGR2RGB)
     pil_im = Image.fromarray(tmp)
