@@ -37,6 +37,9 @@ def classify(cv2_img, mod = None):
     preds = raw[0]
     return decode_predictions(preds)
 
+def classify_multiple(cv2_list, mod = None):
+    return [classify(c, mod) for c in cv2_list]
+
 def cv2_to_PIL(cv2_im):
     tmp = cv2.cvtColor(cv2_im,cv2.COLOR_BGR2RGB)
     pil_im = Image.fromarray(tmp)
