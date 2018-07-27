@@ -36,6 +36,15 @@ def cv2_to_PIL(cv2_im):
     pil_im = Image.fromarray(tmp)
     return pil_im
 
+def decode_predictions(preds, top = 5):
+    top_indices = preds.argsort()[-top:][::-1]
+    total = sum(preds[top_indices])
+    results = {}
+    for t in top_indices:
+        pred = labels[t]
+        results[pred] = preds[t]/total
+    return results
+
 def PIL_to_raw(img_pil):
     img_tensor = preprocess(img_pil)
     img_tensor.unsqueeze_(0)
