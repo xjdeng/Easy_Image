@@ -1,10 +1,11 @@
 # Based loosely off of 
 # http://blog.outcome.io/pytorch-quick-start-classifying-an-image/
 
-import io, os, json
-from PIL import Image
+import os, json
 from torchvision import models, transforms
 from torch.autograd import Variable
+from PIL import Image
+import cv2
 
 squeeze = models.squeezenet1_1(pretrained=True)
 
@@ -26,3 +27,11 @@ raw_labels = json.load(raw_label_f)
 raw_label_f.close()
 
 labels = {int(key):value for (key, value) in raw_labels.items()}
+
+def PIL_to_raw(img_pil):
+    img_tensor = preprocess(img_pil)
+    img_tensor.unsqueeze_(0)
+    img_variable = Variable(img_tensor)
+    fc_out = squeeze(img_variable)
+    return fc_out.data.numpy()
+
