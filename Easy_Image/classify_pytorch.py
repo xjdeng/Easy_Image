@@ -6,6 +6,7 @@ from torchvision import models, transforms
 from torch.autograd import Variable
 from PIL import Image
 import cv2
+import numpy as np
 
 squeeze = models.squeezenet1_1(pretrained=True)
 
@@ -39,6 +40,20 @@ def classify(cv2_img, mod = None):
 
 def classify_multiple(cv2_list, mod = None):
     return [classify(c, mod) for c in cv2_list]
+
+def combine_classifications(classified_list):
+    tot = 0
+    result = {}
+    for c in classified_list:
+        for d in c:
+            tot += np.float64(d[2])
+    for c in classified_list:
+        for d in c:
+            try:
+                result[d[1]] += np.float64(d[2])/tot
+            except KeyError:
+                result[d[1]] = np.float64(d[2])/tot
+    return result    
 
 def cv2_to_PIL(cv2_im):
     tmp = cv2.cvtColor(cv2_im,cv2.COLOR_BGR2RGB)
