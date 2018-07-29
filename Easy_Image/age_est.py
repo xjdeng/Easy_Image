@@ -20,6 +20,9 @@ if len(curdir) == 0:
 else:
     MODEL_PATH = os.path.dirname(__file__) + "/misc/age_est_model.pt"
 
+model = twoHiddenNet()
+model.load_state_dict(torch.load(MODEL_PATH))
+
 
 def get_age_from_image(img):
     fe = Img2Vec(cuda=False)
@@ -33,12 +36,6 @@ def get_feats(image_path):
     feats = fe.get_vec(img).reshape(1, -1)
     return feats
 
-def get_model():
-    model = twoHiddenNet()
-    model.load_state_dict(torch.load(MODEL_PATH))
-    return model
-
-
 def main(argv):
     if len(argv) != 1:
         print("Usage: python3 age_est.py imagepath")
@@ -49,7 +46,6 @@ def main(argv):
     image_path = argv[0]
     image_feats = get_feats(image_path)
 
-    model = get_model()
     estimated_age = model(Variable(torch.from_numpy(image_feats).float()))
     print("Estimated Age : %.1f" % estimated_age.data.cpu().numpy()[0][0])
     return
