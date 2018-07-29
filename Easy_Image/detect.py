@@ -1,14 +1,14 @@
 try:
     from . import exif_json
     from . import compare
-    from . import classify
+    from . import classify_pytorch as classify
 except ImportError:
     import exif_json
     import compare
     try:
-        import classify
+        import classify_pytorch as classify
     except ImportError:
-        print("Warning: Keras not found. You will not be able to classify images!")
+        print("Warning: Pytorch not found. You will not be able to classify images!")
 import copy, cv2, dlib, os
 import numpy as np
 from path import Path as path
@@ -32,7 +32,7 @@ lbppath = dir_path + "/lbpcascades/"
 default_predictor = dlib.shape_predictor(frm.pose_predictor_model_location())
 
 classify_field = 50706
-imagenet_model = 'vgg16'
+imagenet_model = 'squeezenet'
 
 def convert_rect(myinput0):
     """
@@ -306,16 +306,13 @@ and load that image.
     
     def classify(self, mod = imagenet_model):
         """
-Classifies the image using an ImageNet model (default: vgg16) by returning
+Classifies the image using an ImageNet model (default: squeezenet) by returning
 a list of tuples of classifications and their respective probabilities.
 
-This require Keras and a Deep Learning backend like Tensorflow (recommended),
-Theano, or Microsoft's CNTK.
-
-See https://keras.io/backend/ on picking a Keras backend.
+This require Pytorch 0.3.0
         """
 
-        return classify.classify(self.getimg(), mod)
+        return classify.classify(self.getimg())
                 
     def detect_faces(self, detector = default_detector):
         """
@@ -515,9 +512,9 @@ the faces.
         exif_json.save(self.path, output)
         return faces
 
-    def remove_faces(self):
+    def remove_exif(self):
         """
-Removes faces from the image's EXIF data        
+Removes images' exif date including faces and classifications        
         """
         exif_json.save(self.path, None)
             
@@ -612,9 +609,12 @@ will be implemented in the future.
         if isinstance(x, EasyImage):
             super(EasyImageList, self).append(x)
             
-    def classify(self, mod = imagenet_model, separate = False):
-        preclassified = [classify.preclassify(i.getimg(), mod) for i in self]
-        return classify.classify_multiple_processed(preclassified, mod, separate)
+    def classify(self, mod = imagenet_model):
+        return [img.classify(mod = mod) for img in self]
+    
+    def classify_list(self, mod = imagenet_model):
+        classes = self.classify(mod = mod)
+        return classify.combine_classifications(classes)
     
     def cluster(self, n_clusters, width = 30, height = 30, debug = False):
         newimgs = self.resize(width, height, inplace = False)
@@ -761,54 +761,8 @@ class EasyImageFileList(EasyImageList):
             except NotAnImage:
                 pass
     
-    def classify(self, mod = imagenet_model, separate = False):
-        """
-        separate = False: return the classifications for all of the images in aggregate
-        separate = True: return classifications for each image separately
-        """
-        tagged = []
-        notags = []
-        classifications = []
-        for i in range(0,len(self)):
-            test = self[i].classify_from_exif(mod)
-            if test is not None:
-                if len(test) == 0:
-                    notags.append(i)
-                else:
-                    tagged.append(i)
-                    classifications.append(test)
-        n1 = len(classifications)
-        class1 = classify.postclassify_multiple(classifications, separate)
-        #TODO: Fix bug when image already has tags and separate = True
-        notag_images = EasyImageList([self[i] for i in notags])
-        n2 = len(notag_images)
-        class2 = notag_images.classify(mod, separate)
-        if separate == False:
-            result = {}
-            for k in class1.keys():
-                try:
-                    result[k] += class1[k]*n1/(n1+n2)
-                except KeyError:
-                    result[k] = class1[k]*n1/(n1+n2)
-            for k in class2.keys():
-                try:
-                    result[k] += class2[k]*n2/(n1+n2)
-                except KeyError:
-                    result[k] = class2[k]*n2/(n1+n2)
-                
-                
-            return result
-        else:
-            
-            result = [None]*len(self)
-            for i,j in enumerate(tagged):
-                result[j] = class1[i]
-            for i,j in enumerate(notags):
-                result[j] = class2[i]
-            return result
-    
-    def remove_faces(self):
-        [img.remove_faces() for img in self]
+    def remove_exif(self):
+        [img.remove_exif() for img in self]
 
 class EasyFaceList(EasyImageList):
     
