@@ -312,7 +312,7 @@ a list of tuples of classifications and their respective probabilities.
 This require Pytorch 0.3.0
         """
 
-        return classify.classify(self.getimg(), mod)
+        return classify.classify(self.getimg())
                 
     def detect_faces(self, detector = default_detector):
         """

@@ -32,14 +32,14 @@ labels = {int(key):value for (key, value) in raw_labels.items()}
 def best_prediction(raw):
     return labels[raw.argmax()]
 
-def classify(cv2_img, mod = None):
+def classify(cv2_img):
     img_pil = cv2_to_PIL(cv2_img)
     raw = PIL_to_raw(img_pil)
     preds = raw[0]
     return decode_predictions(preds)
 
-def classify_multiple(cv2_list, mod = None):
-    return [classify(c, mod) for c in cv2_list]
+def classify_multiple(cv2_list):
+    return [classify(c) for c in cv2_list]
 
 def combine_classifications(classified_list):
     tot = 0
