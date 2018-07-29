@@ -1,12 +1,14 @@
 #Taken from https://github.com/cetinsamet/age-estimation
 import sys
 import numpy as np
+import cv2
 from PIL import Image
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
+import copy
 
 try:
     from train import twoHiddenNet
@@ -27,11 +29,18 @@ else:
 model = twoHiddenNet()
 model.load_state_dict(torch.load(MODEL_PATH))
 
+def cv2_to_PIL(cv2_im):
+    tmp = cv2.cvtColor(cv2_im,cv2.COLOR_BGR2RGB)
+    pil_im = Image.fromarray(tmp)
+    return pil_im
 
-def get_age_from_image(img):
+
+def get_age_from_cv2(img):
     fe = Img2Vec(cuda=False)
-    img2 = img.resize((224,224))
-    image_feats = fe.get_vec(img2).reshape(1, -1)
+    img2 = copy.copy(img)
+    img3 = cv2_to_PIL(img2)
+    img3 = img3.resize((224,224))
+    image_feats = fe.get_vec(img3).reshape(1, -1)
     estimated_age = model(Variable(torch.from_numpy(image_feats).float()))
     return estimated_age.data.cpu().numpy()[0][0]
     
