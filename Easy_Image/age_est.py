@@ -16,6 +16,11 @@ import os
 
 MODEL_PATH = os.path.dirname(__file__) + "/misc/age_est_model.pt"
 
+def get_age_from_image(img):
+    fe = Img2Vec(cuda=False)
+    img2 = img.resize((224,224))
+    feats = fe.get_vec(img).reshape(1, -1)
+
 def get_feats(image_path):
     fe = Img2Vec(cuda=False)  # change this if you use Cuda version of the PyTorch.
     img = Image.open(image_path)
