@@ -13,8 +13,13 @@ from img_to_vec import Img2Vec
 
 import os
 
+curdir = os.path.dirname(__file__)
 
-MODEL_PATH = os.path.dirname(__file__) + "/misc/age_est_model.pt"
+if len(curdir) == 0:
+    MODEL_PATH = "misc/age_est_model.pt"
+else:
+    MODEL_PATH = os.path.dirname(__file__) + "/misc/age_est_model.pt"
+
 
 def get_age_from_image(img):
     fe = Img2Vec(cuda=False)
@@ -35,15 +40,11 @@ def get_model():
 
 
 def main(argv):
-    global MODEL_PATH
-
     if len(argv) != 1:
         print("Usage: python3 age_est.py imagepath")
         exit()
     
-    curdir = os.path.dirname(__file__)
-    if len(curdir) == 0:
-        MODEL_PATH = "misc/age_est_model.pt"
+
 
     image_path = argv[0]
     image_feats = get_feats(image_path)
