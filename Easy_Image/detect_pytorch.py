@@ -512,9 +512,9 @@ the faces.
         exif_json.save(self.path, output)
         return faces
 
-    def remove_faces(self):
+    def remove_exif(self):
         """
-Removes faces from the image's EXIF data        
+Removes images' exif date including faces and classifications        
         """
         exif_json.save(self.path, None)
             
@@ -757,8 +757,8 @@ class EasyImageFileList(EasyImageList):
             except NotAnImage:
                 pass
     
-    def remove_faces(self):
-        [img.remove_faces() for img in self]
+    def remove_exif(self):
+        [img.remove_exif() for img in self]
 
 class EasyFaceList(EasyImageList):
     
