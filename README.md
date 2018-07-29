@@ -35,23 +35,23 @@ Then download and install Easy Facial Recognition:
 
 `pip install -U .`
 
-##### Install Keras, now required:
+##### Install Pytorch 0.3.0, now required:
 
-If you don't have Keras, you'll first need to pick a Deep Learning backend for it:
+<u>Windows</u>:
 
-1) Tensorflow (recommended, but not compatible with Windows unless using Python 3.5 or higher): 
+First, go to [Peterjc123's Google Drive folder](https://drive.google.com/drive/folders/0B-X0-FlSGfCYdTNldW02UGl4MXM) and download the version corresponding to your Python version (3.5 or 3.6).  Make sure you pick the one corresponding to your version of [CUDA](https://developer.nvidia.com/cuda-90-download-archive) (or lack thereof, in that case, pick a CPU version.)
 
-```
-pip install tensorflow-gpu
-```
+Note that this repository only officially supports Pytorch 0.3.0.  It may work with later versions but it's not guaranteed!
 
-(Leave out the "-gpu" part if you don't have a GPU or don't want to use one.) 
+Then install using conda:
 
-2) Theano: pip install theano
+```conda install <the file you downloaded>```
 
-3) Microsoft CNTK: [Installation Instructions](https://docs.microsoft.com/en-us/cognitive-toolkit/setup-windows-python?tabs=cntkpy24)
+<u>Mac and Linux:</u>
 
-Then install Keras: pip install keras
+Mac and Linux aren't officially supported by this module and it may be difficult to install Pytorch version 0.3.0 which is the one officially supported.  If you can't find version 0.3.0, you can install the latest Pytorch in the following way although there are no guarantees everything will work:
+
+```conda install -c pytorch pytorch```
 
 ### What can you do with this module?
 
