@@ -8,8 +8,12 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
 
-from train import twoHiddenNet
-from img_to_vec import Img2Vec
+try:
+    from train import twoHiddenNet
+    from img_to_vec import Img2Vec
+except ImportError:
+    from Easy_Image.train import twoHiddenNet
+    from Easy_Image.img_to_vec import Img2Vec
 
 import os
 
@@ -27,7 +31,10 @@ model.load_state_dict(torch.load(MODEL_PATH))
 def get_age_from_image(img):
     fe = Img2Vec(cuda=False)
     img2 = img.resize((224,224))
-    feats = fe.get_vec(img).reshape(1, -1)
+    image_feats = fe.get_vec(img2).reshape(1, -1)
+    estimated_age = model(Variable(torch.from_numpy(image_feats).float()))
+    return estimated_age.data.cpu().numpy()[0][0]
+    
 
 def get_feats(image_path):
     fe = Img2Vec(cuda=False)  # change this if you use Cuda version of the PyTorch.
