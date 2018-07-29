@@ -45,14 +45,14 @@ def combine_classifications(classified_list):
     tot = 0
     result = {}
     for c in classified_list:
-        for d in c:
-            tot += np.float64(d[2])
+        for d in c.keys():
+            tot += np.float64(c[d])
     for c in classified_list:
-        for d in c:
+        for d in c.keys():
             try:
-                result[d[1]] += np.float64(d[2])/tot
+                result[d] += np.float64(c[d])/tot
             except KeyError:
-                result[d[1]] = np.float64(d[2])/tot
+                result[d] = np.float64(c[d])/tot
     return result    
 
 def cv2_to_PIL(cv2_im):

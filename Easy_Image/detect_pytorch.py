@@ -612,6 +612,10 @@ will be implemented in the future.
     def classify(self, mod = imagenet_model):
         return [img.classify(mod = mod) for img in self]
     
+    def classify_list(self, mod = imagenet_model):
+        classes = self.classify(mod = mod)
+        return classify.combine_classifications(classes)
+    
     def cluster(self, n_clusters, width = 30, height = 30, debug = False):
         newimgs = self.resize(width, height, inplace = False)
         g = newimgs[0].getimg().flatten()
