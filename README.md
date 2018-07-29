@@ -41,7 +41,7 @@ Then download and install Easy Facial Recognition:
 
 First, go to [Peterjc123's Google Drive folder](https://drive.google.com/drive/folders/0B-X0-FlSGfCYdTNldW02UGl4MXM) and download the version corresponding to your Python version (3.5 or 3.6).  Make sure you pick the one corresponding to your version of [CUDA](https://developer.nvidia.com/cuda-90-download-archive) (or lack thereof, in that case, pick a CPU version.)
 
-Note that this repository only officially supports Pytorch 0.3.0.  It may work with later versions but it's not guaranteed!
+Note that this repository only officially supports Pytorch 0.3.0.  It may work with later versions but it's not guaranteed!  Alternatively, you can also use the "Mac and Linux" instructions below to download the latest version of Pytorch for Windows.  **As of this writing, the latest version, 0.4.0, works for my Windows 10 system.**
 
 Then install using conda:
 
