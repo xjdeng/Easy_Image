@@ -609,9 +609,8 @@ will be implemented in the future.
         if isinstance(x, EasyImage):
             super(EasyImageList, self).append(x)
             
-    def classify(self, mod = imagenet_model, separate = False):
-        preclassified = [classify.preclassify(i.getimg(), mod) for i in self]
-        return classify.classify_multiple_processed(preclassified, mod, separate)
+    def classify(self, mod = imagenet_model):
+        return [classify.classify(img.getimg()) for img in self]
     
     def cluster(self, n_clusters, width = 30, height = 30, debug = False):
         newimgs = self.resize(width, height, inplace = False)
