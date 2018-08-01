@@ -7,7 +7,7 @@ import csv
 import cv2
 
 class ColorDescriptor:
-	def __init__(self, bins):
+	def __init__(self, bins = (8,2,3)):
 		# store the number of bins for the 3D histogram
 		self.bins = bins
 
