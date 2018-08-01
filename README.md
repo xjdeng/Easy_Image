@@ -25,7 +25,9 @@ You'll need to set up a few dependencies before running:
 
 `conda install -c conda-forge numpy opencv dlib Pillow scikit-image`
 
-```conda install -c pytorch pytorch``` (alternatively, ```conda install -c pytorch pytorch-cpu``` if you don't have a supported GPU)
+```conda install -c pytorch pytorch``` (alternatively, ```conda install -c pytorch pytorch-cpu``` if you don't have a supported GPU).  If you have an older GPU but pytorch complains that it's CUDA capabilities are too old but you really want to use the GPU, then your only choices are to either compile it from source if you want the latest Pytorch ([see my video here](https://www.youtube.com/watch?v=sGWLjbn5cgs)) or to install Pytorch 0.3.0 to save yourself a headache by following the instructions below.
+
+Continue installing the rest of the dependencies:
 
 `pip install piexif imutils face_recognition_models torchvision`
 
