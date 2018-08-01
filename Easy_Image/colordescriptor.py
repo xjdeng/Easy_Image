@@ -1,3 +1,6 @@
+# Code taken from https://www.pyimagesearch.com/2014/12/01/complete-guide-building-image-search-engine-python-opencv/
+# Credit goes to Adrian Rosebrock of pyimagesearch.com
+
 # import the necessary packages
 import numpy as np
 import csv
