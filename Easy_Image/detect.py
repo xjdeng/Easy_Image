@@ -2,9 +2,11 @@ try:
     from . import exif_json
     from . import compare
     from . import classify_pytorch as classify
+    from . import colordescriptor as cd
 except ImportError:
     import exif_json
     import compare
+    import colordescriptor as cd
     try:
         import classify_pytorch as classify
     except ImportError:
@@ -313,6 +315,15 @@ This require Pytorch 0.3.0
         """
 
         return classify.classify(self.getimg())
+    
+    def describe(self, bins = (8,12,3)):
+        """
+Get a color histogram for the current image, used to "summarize" it. For a 
+full discussion on the bins and the theory behind this, please see:
+https://www.pyimagesearch.com/2014/12/01/complete-guide-building-image-search-engine-python-opencv/
+        """
+        mycd = cd.ColorDescriptor(bins)
+        return mycd.describe(self.getimg())
                 
     def detect_faces(self, detector = default_detector):
         """
