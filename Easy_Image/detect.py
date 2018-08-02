@@ -627,11 +627,11 @@ will be implemented in the future.
         classes = self.classify(mod = mod)
         return classify.combine_classifications(classes)
     
-    def cluster(self, n_clusters, width = 30, height = 30, debug = False):
-        newimgs = self.resize(width, height, inplace = False)
-        g = newimgs[0].getimg().flatten()
-        for i in range(1, len(newimgs)):
-            g = np.vstack((g, newimgs[i].getimg().flatten()))
+    def cluster(self, n_clusters, debug = False):
+        tmp = self[0].describe()
+        g = np.zeros((len(self), len(tmp)))
+        for i, img in enumerate(self):
+            g[i,:] = img.describe()
         g = g / 255.0       
         model = KMeans(n_clusters = n_clusters)
         clusters = model.fit_predict(g)
@@ -646,14 +646,14 @@ will be implemented in the future.
         else:
             return results
     
-    def cluster_smart(self, min_clusters = 2, max_clusters = None, width = 30,\
-                      height = 30, debug = False):
-        newimgs = self.resize(width, height, inplace = False)
+    def cluster_smart(self, min_clusters = 2, max_clusters = None, debug = False):
         if max_clusters is None:
-            max_clusters = len(newimgs) - 2
-        g = newimgs[0].getimg().flatten()
-        for i in range(1, len(newimgs)):
-            g = np.vstack((g, newimgs[i].getimg().flatten()))
+            max_clusters = len(self) - 2
+        tmp = self[0].describe()
+        g = np.zeros((len(self), len(tmp)))
+        for i, img in enumerate(self):
+            g[i,:] = img.describe()
+        g = g / 255.0
         best_n, best_s = (1, -2)
         for i in range(min_clusters, max_clusters + 1):
             model = KMeans(n_clusters = i)
