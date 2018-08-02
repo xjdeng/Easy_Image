@@ -674,17 +674,18 @@ will be implemented in the future.
         else:
             return results
     
-    def cluster_gmm_smart(self, min_clusters = 2, max_clusters = None, width = 30,\
-                      height = 30, debug = False):
+    def cluster_gmm_smart(self, min_clusters = 2, max_clusters = None, \
+                          debug = False):
         """
 BETA. Very slow and inaccurate right now.
         """
-        newimgs = self.resize(width, height, inplace = False)
         if max_clusters is None:
-            max_clusters = len(newimgs) - 2
-        g = newimgs[0].getimg().flatten()
-        for i in range(1, len(newimgs)):
-            g = np.vstack((g, newimgs[i].getimg().flatten()))
+            max_clusters = len(self) - 2
+        tmp = self[0].describe()
+        g = np.zeros((len(self), len(tmp)))
+        for i, img in enumerate(self):
+            g[i,:] = img.describe()
+        g = g / 255.0
         best_n, best_s = (1, 999999999)
         for i in range(min_clusters, max_clusters + 1):
             model = GMM(n_components = i)
