@@ -412,6 +412,13 @@ Displays the image using OpenCV's imshow
         key = cv2.waitKey()
         cv2.destroyWindow(wname)
         return key
+    
+    def signature(self, width = 30, height = 30):
+        """
+Get a numpy signature of the image, which is its resized image flattened.
+        """
+        tmp = self.resize(width, height, False)
+        return tmp.getimg().flatten()
 
 class EasyImageFile(EasyImage):
     """
