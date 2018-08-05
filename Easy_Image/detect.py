@@ -36,6 +36,8 @@ default_predictor = dlib.shape_predictor(frm.pose_predictor_model_location())
 classify_field = 50706
 imagenet_model = 'squeezenet'
 
+ORB = cv2.ORB_create()
+
 def convert_rect(myinput0):
     """
 Converts the output from OpenCV's Cascade Classifier to an equivalent
@@ -358,6 +360,16 @@ drawn around the faces (at least in the default option.)
 Returns the image stored in the object in numpy.ndarray format.
         """
         return self._img
+    
+    def ORB(self):
+        """
+Extracts the image's features using the ORB algorithm
+        """
+        #https://docs.opencv.org/3.0-beta/doc/py_tutorials/py_feature2d/py_orb/py_orb.html
+        grey = get_gray(self)
+        kp0 = ORB.detect(grey,None)
+        _, des = ORB.compute(grey, kp0)
+        return des
     
     def plot(self):
         """
