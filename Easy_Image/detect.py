@@ -381,7 +381,14 @@ Like show() but plots the image using Matplotlib
         """
 Resizes the image to the specified width and height
         """
-        newimg = cv2.resize(self._img, (width, height))
+        try:
+            newimg = cv2.resize(self._img, (width, height))
+        except AttributeError:
+            if inplace == True:
+                raise(InvalidOperation)
+            else:
+                warnings.warn("Returning a new EasyImage of the resized face.")
+                return EasyImage(cv2.resize(self.getimg(), (width, height)))
         if inplace == True:
             self._img = newimg
             return self
@@ -608,6 +615,10 @@ class NotAnImage(Exception):
 class NotFace(Exception):
     pass
 #TODO: Add more functionality and information to this exception
+
+class InvalidOperation(Exception):
+    pass
+#TODO: Add more functionality to this exception
 
 class EasyImageList(list):
     """
