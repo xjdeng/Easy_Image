@@ -387,7 +387,6 @@ Resizes the image to the specified width and height
             if inplace == True:
                 raise(InvalidOperation)
             else:
-                warnings.warn("Returning a new EasyImage of the resized face.")
                 return EasyImage(cv2.resize(self.getimg(), (width, height)))
         if inplace == True:
             self._img = newimg
