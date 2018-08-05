@@ -657,10 +657,10 @@ will be implemented in the future.
         return classify.combine_classifications(classes)
     
     def cluster(self, n_clusters, debug = False):
-        tmp = self[0].describe()
+        tmp = self[0].signature()
         g = np.zeros((len(self), len(tmp)))
         for i, img in enumerate(self):
-            g[i,:] = img.describe()
+            g[i,:] = img.signature()
         g = g / 255.0       
         model = KMeans(n_clusters = n_clusters)
         clusters = model.fit_predict(g)
@@ -678,10 +678,10 @@ will be implemented in the future.
     def cluster_smart(self, min_clusters = 2, max_clusters = None, debug = False):
         if max_clusters is None:
             max_clusters = len(self) - 2
-        tmp = self[0].describe()
+        tmp = self[0].signature()
         g = np.zeros((len(self), len(tmp)))
         for i, img in enumerate(self):
-            g[i,:] = img.describe()
+            g[i,:] = img.signature()
         g = g / 255.0
         best_n, best_s = (1, -2)
         scores = []
@@ -713,10 +713,10 @@ BETA. Very slow and inaccurate right now.
         """
         if max_clusters is None:
             max_clusters = len(self) - 2
-        tmp = self[0].describe()
+        tmp = self[0].signature()
         g = np.zeros((len(self), len(tmp)))
         for i, img in enumerate(self):
-            g[i,:] = img.describe()
+            g[i,:] = img.signature()
         g = g / 255.0
         best_n, best_s = (1, 999999999)
         for i in range(min_clusters, max_clusters + 1):
