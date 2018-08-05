@@ -689,10 +689,10 @@ will be implemented in the future.
             model = KMeans(n_clusters = i)
             test = model.fit_predict(g)
             score = silhouette_score(g, test)
+            if debug == True:
+                scores.append((i, score))
             if score > best_s:
                 best_n, best_s = (i, score)
-                if debug == True:
-                    scores.append((i, score))
         model = KMeans(n_clusters = best_n)
         clusters = model.fit_predict(g)
         n_clusters = max(0, max(clusters))
