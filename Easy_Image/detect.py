@@ -667,12 +667,15 @@ will be implemented in the future.
             g[i,:] = img.describe()
         g = g / 255.0
         best_n, best_s = (1, -2)
+        scores = []
         for i in range(min_clusters, max_clusters + 1):
             model = KMeans(n_clusters = i)
             test = model.fit_predict(g)
             score = silhouette_score(g, test)
             if score > best_s:
                 best_n, best_s = (i, score)
+                if debug == True:
+                    scores.append((i, score))
         model = KMeans(n_clusters = best_n)
         clusters = model.fit_predict(g)
         n_clusters = max(0, max(clusters))
@@ -682,7 +685,7 @@ will be implemented in the future.
         for i,c in enumerate(clusters):
             results[c].append(self[i])
         if debug == True:
-            return (results, clusters, model)
+            return (results, clusters, model, scores)
         else:
             return results
     
