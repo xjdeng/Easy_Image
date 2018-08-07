@@ -125,6 +125,15 @@ def get_all_files(folder):
     return result
 
 def load_image_dir(mydir, recursive = False, maximgs = None, strout = False):
+    """
+Loads all of the image files from a directory into an EasyImageFileList obj
+
+recursive: if True, recursively add images in all subdirectories
+
+maximgs: if set to a number, maximum # of images to load
+
+strout: if true, loads into a ImageFileList obj for less memory usage.
+    """
     if recursive == True:
         files = get_all_files(mydir)
     else:
