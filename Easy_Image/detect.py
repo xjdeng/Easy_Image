@@ -799,7 +799,7 @@ class EasyImageFileList(EasyImageList):
     def __init__(self, x = []):
         if isinstance(x, str):
             tmp = load_image_dir(x)
-            [self.append(t) for t in tmp]
+            [super(EasyImageFileList, self).append(t) for t in tmp]
         else:
             super(EasyImageFileList, self).__init__(x)
 
