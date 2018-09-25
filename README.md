@@ -29,7 +29,7 @@ You'll need to set up a few dependencies before running:
 
 Continue installing the rest of the dependencies:
 
-`pip install piexif imutils face_recognition_models torchvision`
+`pip install piexif imutils face_recognition_models torchvision fake-useragent`
 
 Then download and install Easy Facial Recognition:
 
