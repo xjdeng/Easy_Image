@@ -13,6 +13,9 @@ def _norm(mylist):
     s = sum(mylist)
     return [i/s for i in mylist]
 
+def copy(mylist, mydest):
+    [f.copy(mydest) for f in mylist]
+
 def run(basedir, maxresults, scheme, minfiles = 10):
     dirfiles = {}
     for d in path(basedir).walkdirs():
