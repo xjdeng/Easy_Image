@@ -18,17 +18,14 @@ from imutils import face_utils
 import face_recognition_models as frm
 #from skimage.io import imread
 from urllib.error import URLError, HTTPError
-import urllib
+from skimage.io import imread
 import warnings
 import random
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture as GMM
 from sklearn.metrics import silhouette_score
 from matplotlib import pyplot as plt
-from fake_useragent import UserAgent
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
-
-ua = UserAgent()
 
 mypath = os.path.abspath(__file__)
 dir_path = os.path.dirname(mypath)
@@ -97,12 +94,6 @@ in the app you're building; just for your own information.
     """
     hp = path(haarpath)
     return hp.files()
-
-def imread(url):
-    req = urllib.request.Request(url, headers = {'User-Agent': ua.random})
-    response = urllib.request.urlopen(req)
-    img_array = np.array(bytearray(response.read()), dtype=np.uint8)
-    return cv2.imdecode(img_array, -1)
 
 def lbpcascasdes():
     """
@@ -318,8 +309,8 @@ and load that image.
             if myinput.startswith("http"):
                 try:
                     img = imread(myinput)
-                    #self._img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-                    self._img = img
+                    self._img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+                    #self._img = img
                     self.path = None
                 except (URLError, HTTPError, AttributeError):
                     raise(NotAnImage)
