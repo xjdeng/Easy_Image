@@ -56,3 +56,7 @@ def run_very_recent_bias(basedir, maxresults, minfiles = 10):
 
 def run_smaller_bias(basedir, maxresults, minfiles = 10):
     return run(basedir, maxresults, lambda x:1.0/len(x.files()), minfiles)
+
+def run_recent_bias_with_files(basedir, maxresults, minfiles = 10):
+    f = lambda x:len(x.files())/np.log(x.ctime)
+    return run(basedir, maxresults, f, minfiles)
