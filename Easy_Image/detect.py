@@ -349,6 +349,12 @@ an EasyFace object.
         else:
             return EasyFaceList([EasyFace(self, face) for face in faces])
 
+    def detect_faces_simple(self, detector = default_detector):
+        """
+Dummy method, only useful when called from an EasyImageFile obj
+        """
+        return self.detect_faces(detector)
+
     def draw_faces(self, detector = default_detector, color = (0, 255, 0),\
                    width = 2):
         """
@@ -440,7 +446,13 @@ Rotates the image by "angle" degrees by creating a new EasyImage using
 imutils.rotate_bound
 See: https://www.pyimagesearch.com/2017/01/02/rotate-images-correctly-with-opencv-and-python/
         """
-        newimg = rotate_bound(self.getimg(), angle)
+        newimg0 = copy.copy(self.getimg())
+        x1, y1, _ = newimg0.shape
+        for x in range(x1):
+            for y in range(y1):
+                if sum(newimg0[x,y]) == 0:
+                    newimg0[x,y] = np.array([0,0,1])        
+        newimg = rotate_bound(newimg0, angle)
         return EasyImage(newimg)
     
     def save(self,newpath):
@@ -547,6 +559,14 @@ ignore the faces in the EXIF if the versions don't match.
             return self.force_detect_faces(detector)
         else:
             return test
+        
+    def detect_faces_simple(self, cvv = None, dlibv = None, \
+                            detector = default_detector):
+        """
+Ignore the cache when detecting faces
+        """
+        faces = super(EasyImageFile, self).detect_faces(detector = detector)
+        return faces
             
     
     def faces_from_exif(self, cvv = None, dlibv = None, detector = None):
