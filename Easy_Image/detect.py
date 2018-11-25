@@ -14,7 +14,7 @@ except ImportError:
 import copy, cv2, dlib, os
 import numpy as np
 from path import Path as path
-from imutils import face_utils
+from imutils import face_utils, rotate_bound
 import face_recognition_models as frm
 #from skimage.io import imread
 from urllib.error import URLError, HTTPError
@@ -404,6 +404,15 @@ Resizes the image to the specified width and height
             return self
         else:
             return EasyImage(newimg)
+    
+    def rotate(self, angle):
+        """
+Rotates the image by "angle" degrees by creating a new EasyImage using
+imutils.rotate_bound
+See: https://www.pyimagesearch.com/2017/01/02/rotate-images-correctly-with-opencv-and-python/
+        """
+        newimg = rotate_bound(self.getimg(), angle)
+        return EasyImage(newimg)
     
     def save(self,newpath):
         """
