@@ -382,6 +382,35 @@ Extracts the image's features using the ORB algorithm
         _, des = ORB.compute(grey, kp0)
         return des
     
+    def paste(self, newimg, x0, y0):
+        """
+Pastes an image, newimg, with the upper-left at x0,y0, assuming all fully
+black pixels are transparent.
+        """
+        background = copy.copy(self.getimg())
+        h, w, _ = background.shape
+        foreground = newimg.getimg()
+        hi, wi, _ = foreground.shape
+        x1, y1 = hi + x0, wi + y0
+        if (x1 > h) or (y1 > w):
+            raise(InvalidOperation)
+        reblacken = []
+        for x in range(x0, x1):
+            for y in range(y0, y1):
+                if sum(background[x,y]) == 0:
+                    reblacken.append((x,y))
+                    background[x,y] = np.array([0,0,1])
+        for i in range(hi):
+            for j in range(wi):
+                if sum(foreground[i,j] != 0):
+                    background[i+x0, j+y0] = foreground[i,j]
+        for r in reblacken:
+            background[r[0], r[1]] = np.array([0,0,0])
+        return EasyImage(background)
+                
+        
+        
+    
     def plot(self):
         """
 Like show() but plots the image using Matplotlib
