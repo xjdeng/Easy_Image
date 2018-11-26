@@ -353,7 +353,8 @@ an EasyFace object.
         """
 Dummy method, only useful when called from an EasyImageFile obj
         """
-        return self.detect_faces(detector)
+        x = detector
+        return self.detect_faces(x)
 
     def draw_faces(self, detector = default_detector, color = (0, 255, 0),\
                    width = 2):
@@ -630,7 +631,7 @@ This is a special case of an EasyImage that's a face. It keeps pointers to the
 original image that the face was detected from and a dlib.rectangle object
 representing the faces as its constructors.
     """
-
+#TODO: store the detector used to detect this face
     def __init__(self, an_easy_image, a_rect):
         if isinstance(an_easy_image, EasyImage) & \
         isinstance(a_rect, dlib.rectangle):
@@ -655,6 +656,9 @@ distance between them, set threshold = None.
     
     def detect_faces(self):
         return EasyFaceList([self])
+    
+    def detect_faces_simple(self, detector = default_detector):
+        return super(EasyFace, self).detect_faces(detector = detector)        
        
     def getimg(self):
         x = self.face.left()
