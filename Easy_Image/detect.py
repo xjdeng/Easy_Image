@@ -389,7 +389,7 @@ Extracts the image's features using the ORB algorithm
         _, des = ORB.compute(grey, kp0)
         return des
     
-    def paste(self, newimg, x0, y0):
+    def paste(self, newimg, y0, x0):
         """
 Pastes an image, newimg, with the upper-left at x0,y0, assuming all fully
 black pixels are transparent.
