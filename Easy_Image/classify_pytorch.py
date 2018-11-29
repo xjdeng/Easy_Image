@@ -1,5 +1,6 @@
 # Based loosely off of 
 # http://blog.outcome.io/pytorch-quick-start-classifying-an-image/
+# https://discuss.pytorch.org/t/trouble-getting-pretrained-resnet152-to-classify-images-properly/20073
 
 import os, json
 from torchvision import models, transforms
