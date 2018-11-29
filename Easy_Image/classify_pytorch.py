@@ -8,8 +8,6 @@ from PIL import Image
 import cv2
 import numpy as np
 
-squeeze = models.squeezenet1_1(pretrained=True)
-
 normalize = transforms.Normalize(
    mean=[0.485, 0.456, 0.406],
    std=[0.229, 0.224, 0.225]
@@ -21,7 +19,9 @@ preprocess = transforms.Compose([
    normalize
 ])
 
-squeeze = models.squeezenet1_1(pretrained=True)
+#imagenet = models.squeezenet1_1(pretrained=True)
+imagenet = models.resnet18(pretrained=True)
+imagenet.eval()
 
 raw_label_f = open(os.path.dirname(__file__) + "/misc/labels.json")
 raw_labels = json.load(raw_label_f)
@@ -73,6 +73,6 @@ def PIL_to_raw(img_pil):
     img_tensor = preprocess(img_pil)
     img_tensor.unsqueeze_(0)
     img_variable = Variable(img_tensor)
-    fc_out = squeeze(img_variable)
+    fc_out = imagenet(img_variable)
     return fc_out.data.numpy()
 
