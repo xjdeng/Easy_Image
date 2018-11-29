@@ -10,7 +10,7 @@ eye_detector = detect.DetectorParams('cascade','haar','haarcascade_eye.xml')
 def _to_deg(rad):
     return rad*180/math.pi
 
-def run(person, sunglass, target = None):
+def run(person, sunglass, enlarge = 1.1, target = None):
     faces = person.detect_faces()
     eyes = None
     face = None
@@ -34,8 +34,16 @@ def run(person, sunglass, target = None):
     angle2 = math.atan((ef2.bottom() - ef2.bottom())/(ef2.right() - ef1.right()))
     angle = _to_deg((angle1 + angle2)/2)
     ff = face.face
-    sunglass.resize(ff.right() - ff.left(), ef2.bottom() - ef1.top())
-    sunglasses2 = sunglass.rotate(-angle)
+    sunglass.resize(round(enlarge*(ff.right() - ff.left())), \
+                    round(enlarge*(ef2.bottom() - ef1.top())))
+    sunglasses2 = sunglass.rotate(angle)
+    sy, sx, _ = sunglasses2.getimg().shape
     if target is None:
-        target = (ff.left(), ef1.top() + ff.top())
-    return person.paste(sunglasses2, target[0], target[1])
+        x = round(ff.left() - sx*(enlarge - 1)/2)
+        y = round(ef1.top() + ff.top() - sy*(enlarge - 1)/2)
+        #target = (ff.left(), ef1.top() + ff.top())
+        target = (max(0,x),max(0,y))
+    try:
+        return person.paste(sunglasses2, target[0], target[1])
+    except detect.InvalidOperation:
+        return None
