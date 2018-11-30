@@ -1,6 +1,7 @@
 import numpy as np
 from path import Path as path
 from PIL import Image
+import random
 
 def _isimage(myfile):
     try:
@@ -20,6 +21,7 @@ def run(basedir, maxresults, scheme, minfiles = 10):
     dirfiles = {}
     for d in path(basedir).walkdirs():
         files = d.files()
+        random.shuffle(files)
         if len(files) > minfiles:
             dirfiles[d] = files
     results = []
