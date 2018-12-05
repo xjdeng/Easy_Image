@@ -24,11 +24,12 @@ preprocess = transforms.Compose([
 imagenet = models.resnet18(pretrained=True)
 imagenet.eval()
 
-raw_label_f = open(os.path.dirname(__file__) + "/misc/labels.json")
+#raw_label_f = open(os.path.dirname(__file__) + "/misc/labels.json")
+raw_label_f = open(os.path.dirname(__file__) + "/misc/imagenet_class_index.json")
 raw_labels = json.load(raw_label_f)
 raw_label_f.close()
 
-labels = {int(key):value for (key, value) in raw_labels.items()}
+labels = {int(key):value[1] for (key, value) in raw_labels.items()}
 
 def best_prediction(raw):
     return labels[raw.argmax()]
@@ -62,6 +63,7 @@ def cv2_to_PIL(cv2_im):
     return pil_im
 
 def decode_predictions(preds, top = 5):
+    preds = np.array([np.exp(p) for p in preds])
     top_indices = preds.argsort()[-top:][::-1]
     total = sum(preds[top_indices])
     results = {}
