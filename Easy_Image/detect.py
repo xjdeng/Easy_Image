@@ -35,7 +35,7 @@ lbppath = dir_path + "/lbpcascades/"
 default_predictor = dlib.shape_predictor(frm.pose_predictor_model_location())
 
 classify_field = 50706
-imagenet_model = 'squeezenet'
+imagenet_model = 'resnet18'
 
 ORB = cv2.ORB_create()
 
@@ -326,7 +326,7 @@ a list of tuples of classifications and their respective probabilities.
 
 This require Pytorch 0.3.0
         """
-
+        classify.choose_model(mod)
         return classify.classify(self.getimg())
     
     def describe(self, bins = (8,12,3)):
@@ -501,6 +501,7 @@ Returns a dictionary with the probabilities that the image of is a particular
 type. It tries to search for classifications in the EXIF data before finally
 doing the classification, in order to save time and computing power.        
         """
+        classify.choose_model(mod)
         test = self.classify_from_exif(mod)
         if test is None:
             return []
@@ -535,6 +536,7 @@ found, return an empty dict. If error, return None. Used primarily with classify
 Ignores the classifications stored in the EXIF and forces a run of the 
 image classification algorithm.     
         """
+        classify.choose_model(mod)
         classes = super(EasyImageFile, self).classify(mod)
         output = [mod, classes]
         exif_json.save(self.path, output, classify_field)
