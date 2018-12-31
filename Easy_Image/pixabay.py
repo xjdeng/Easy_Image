@@ -61,6 +61,11 @@ def download_query(myquery, destination, imgtype = "largeImageURL"):
     [download(url, destination) for url in imglist]
 
 def images_from_query(myquery, imgtype = "largeImageURL"):
+    if isinstance(myquery, list):
+        results = []
+        for item in myquery:
+            results += images_from_query(item, imgtype)
+        return list(set(results))
     return [m[imgtype] for m in  myquery['hits']]
 
 def query(*args, **kwargs):
