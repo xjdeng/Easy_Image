@@ -7,6 +7,7 @@ import time
 import warnings
 import json
 import requests
+import numpy as np
 
 cache_filename = "pixabay_cache.pkl"
 
@@ -71,6 +72,18 @@ def query(*args, **kwargs):
         results = pix.image_search(*args, **kwargs)
         update_cache((args, json.dumps(kwargs)), results)
         return results
+
+def query_all_pages(*args, **kwargs):
+    results = []
+    initial = query(*args, **kwargs)
+    perpage = len(initial['hits'])
+    totalHits = initial['totalHits']
+    pages1 = int(np.floor(totalHits/perpage))
+    for p in range(0, pages1):
+        results.append(query(*args, **kwargs, page = p + 1))
+    results.append(query(*args, **kwargs, page = pages1 + 1)) #TODO: fix redundant pages
+    return results
+    
 
 def set_key(key):
     global api_key
