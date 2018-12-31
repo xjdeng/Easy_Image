@@ -6,6 +6,7 @@ import os
 import time
 import warnings
 import json
+import requests
 
 cache_filename = "pixabay_cache.pkl"
 
@@ -46,8 +47,17 @@ environment variable or set it by calling the set_key() function.""".replace("\n
 
 update_api_key()
 
-def download_query(myquery, imgtype = "largeImageURL"):
-    pass
+def download(url, folder):
+    filename = str(path(url).name)
+    res = requests.get(url)
+    res.raise_for_status()
+    f = open(folder + "/" + filename, 'wb')
+    for chunk in res.iter_content(100000):
+        f.write(chunk)
+
+def download_query(myquery, destination, imgtype = "largeImageURL"):
+    imglist = images_from_query(myquery, imgtype)
+    [download(url, destination) for url in imglist]
 
 def images_from_query(myquery, imgtype = "largeImageURL"):
     return [m[imgtype] for m in  myquery['hits']]
