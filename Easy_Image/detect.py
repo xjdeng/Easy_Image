@@ -103,6 +103,17 @@ in the app you're building; just for your own information.
     lp = path(lbppath)
     return lp.files()
 
+def cluster_dir(mydir, minclusters, maxclusters):
+    filelist = load_image_dir(mydir)
+    clusters = filelist.cluster_smart(minclusters, maxclusters)
+    n = len(clusters)
+    for i in range(0, n):
+        folder = mydir + "/" + str(i)
+        path(mydir + "/" + str(i)).mkdir_p()
+        for f in clusters[i]:
+            path(f.path).move(folder)
+        
+
 def load_image(input1):
     if isinstance(input1, str):
         if input1.startswith("http"):
