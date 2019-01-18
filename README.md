@@ -21,11 +21,19 @@ Open a Terminal or Command Prompt
 
 You'll need to set up a few dependencies before running:
 
-`conda install path.py`
-
-`conda install -c conda-forge numpy opencv dlib Pillow scikit-image`
+`conda install path.py numpy opencv Pillow scikit-image`
 
 ```conda install -c pytorch pytorch``` (alternatively, ```conda install -c pytorch pytorch-cpu``` if you don't have a supported GPU).  If you have an older GPU but pytorch complains that it's CUDA capabilities are too old but you really want to use the GPU, then your only choices are to either compile it from source if you want the latest Pytorch ([see my video here](https://www.youtube.com/watch?v=sGWLjbn5cgs)) or to install Pytorch 0.3.0 to save yourself a headache by following the instructions below.
+
+**Install dlib, which may be a bit tricky:**
+
+```pip install dlib```
+
+Failing that, see the instructions in this [stackoverflow post](pip install https://pypi.python.org/packages/da/06/bd3e241c4eb0a662914b3b4875fc52dd176a9db0d4a2c915ac2ad8800e9e/dlib-19.7.0-cp36-cp36m-win_amd64.whl#md5=b7330a5b2d46420343fbed5df69e6a3f).
+
+Failing that, install from conda-forge as a last resort, but it may cause conflicts with your other libraries:
+
+```conda install -c conda-forge dlib```
 
 Continue installing the rest of the dependencies:
 
