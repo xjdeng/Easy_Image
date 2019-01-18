@@ -20,6 +20,7 @@ import collections
 import json
 import os
 import struct
+from path import Path as path
 
 FILE_UNKNOWN = "Sorry, don't know how to get size for this file."
 
@@ -382,6 +383,21 @@ def main(argv=None):
         print(pprint.pformat(errors, indent=2), file=sys.stderr)
         return EX_NOT_OK
     return EX_OK
+
+def filter_aspect_ratio(source, destination, w, h, tol = 0.1):
+    """
+Copies all images in the source directory with an aspect ratio close to w:h
+to the destination directory
+    """
+    tgtratio = w/h
+    for f in path(source).files():
+        try:
+            a,b = get_image_size(f)
+            ratio = a/b
+            if abs(tgtratio - ratio)/tgtratio < tol:
+                f.copy(destination)
+        except UnknownImageFormat:
+            pass
 
 
 if __name__ == "__main__":
