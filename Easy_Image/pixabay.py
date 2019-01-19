@@ -53,7 +53,7 @@ def download(url, folder):
     res = requests.get(url)
     res.raise_for_status()
     f = open(folder + "/" + filename, 'wb')
-    for chunk in res.iter_content(100000):
+    for chunk in res:
         f.write(chunk)
 
 def download_query(myquery, destination, imgtype = "largeImageURL"):
