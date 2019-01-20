@@ -398,6 +398,38 @@ to the destination directory
                 f.copy(destination)
         except UnknownImageFormat:
             pass
+        
+def cluster_aspect_ratio(source, destination):
+    p_1_4 = path(destination + "/1_4")
+    p_1_4.mkdir_p()
+    p_1_2 = path(destination + "/1_2")
+    p_1_2.mkdir_p()
+    p_2_3 = path(destination + "/2_3")
+    p_2_3.mkdir_p()
+    p_3_4 = path(destination + "/3_4")
+    p_3_4.mkdir_p()
+    p_1_1 = path(destination + "/1_1")
+    p_1_1.mkdir_p()
+    p_4_3 = path(destination + "/4_3")
+    p_4_3.mkdir_p()
+    p_3_2 = path(destination + "/3_2")
+    p_3_2.mkdir_p()
+    p_2_1 = path(destination + "/2_1")
+    p_2_1.mkdir_p()
+    p_4_1 = path(destination + "/4_1")
+    p_4_1.mkdir_p()
+    ratio_dir = {1/4: p_1_4, 1/2: p_1_2, 2/3: p_2_3, 3/4: p_3_4, 1: p_1_1, \
+                 4/3: p_4_3, 3/2: p_3_2, 2: p_2_1, 4: p_4_1}
+    keys = list(ratio_dir.keys())
+    for f in path(source).files():
+        try:
+            a,b = get_image_size(f)
+            ratio = a/b
+            dest = ratio_dir[min(keys, key=lambda x:abs(x-ratio))]
+            f.copy(dest)
+        except UnknownImageFormat:
+            pass
+    
 
 
 if __name__ == "__main__":
