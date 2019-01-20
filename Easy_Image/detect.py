@@ -653,15 +653,13 @@ representing the faces as its constructors.
         else:
             raise(NotFace)
             
-    def compare_face(self, face, threshold = 0.5):
+    def compare_face(self, face, threshold = 0.6):
         """
 Compares 2 faces, seeing whether they're the same person. If you want the actual
 distance between them, set threshold = None.
         """
-        encoding1 = compare.face_encodings(self.parent_image.getimg(), \
-                                           [self.face])[0]
-        encoding2 = compare.face_encodings(face.parent_image.getimg(), \
-                                           [face.face])[0]
+        encoding1 = self.face_encoding()
+        encoding2 = face.face_encoding()
         if threshold is None:
             return compare.face_distance([encoding1], encoding2)[0]
         else:
@@ -745,11 +743,13 @@ will be implemented in the future.
         classes = self.classify(mod = mod)
         return classify.combine_classifications(classes)
     
-    def cluster(self, n_clusters, debug = False):
-        tmp = self[0].signature()
+    def cluster(self, n_clusters, sig_function = 'signature', debug = False):
+        #tmp = self[0].signature()
+        tmp = getattr(self[0],sig_function)()
         g = np.zeros((len(self), len(tmp)))
         for i, img in enumerate(self):
-            g[i,:] = img.signature()
+            s_func = getattr(img, sig_function)
+            g[i,:] = s_func()#img.signature()
         g = g / 255.0       
         model = KMeans(n_clusters = n_clusters)
         clusters = model.fit_predict(g)
@@ -764,13 +764,16 @@ will be implemented in the future.
         else:
             return results
     
-    def cluster_smart(self, min_clusters = 2, max_clusters = None, debug = False):
+    def cluster_smart(self, min_clusters = 2, max_clusters = None, \
+                      sig_function = 'signature', debug = False):
         if max_clusters is None:
             max_clusters = len(self) - 2
-        tmp = self[0].signature()
+        #tmp = self[0].signature()
+        tmp = getattr(self[0],sig_function)()
         g = np.zeros((len(self), len(tmp)))
         for i, img in enumerate(self):
-            g[i,:] = img.signature()
+            s_func = getattr(img, sig_function)
+            g[i,:] = s_func()#img.signature()
         g = g / 255.0
         best_n, best_s = (1, -2)
         scores = []
@@ -796,16 +799,18 @@ will be implemented in the future.
             return results
     
     def cluster_gmm_smart(self, min_clusters = 2, max_clusters = None, \
-                          debug = False):
+                          sig_function = 'signature', debug = False):
         """
 BETA. Very slow and inaccurate right now.
         """
         if max_clusters is None:
             max_clusters = len(self) - 2
-        tmp = self[0].signature()
+        #tmp = self[0].signature()
+        tmp = getattr(self[0],sig_function)()
         g = np.zeros((len(self), len(tmp)))
         for i, img in enumerate(self):
-            g[i,:] = img.signature()
+            s_func = getattr(img, sig_function)
+            g[i,:] = s_func()#img.signature()
         g = g / 255.0
         best_n, best_s = (1, 999999999)
         for i in range(min_clusters, max_clusters + 1):
