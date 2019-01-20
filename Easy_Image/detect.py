@@ -671,7 +671,10 @@ distance between them, set threshold = None.
         return EasyFaceList([self])
     
     def detect_faces_simple(self, detector = default_detector):
-        return super(EasyFace, self).detect_faces(detector = detector)        
+        return super(EasyFace, self).detect_faces(detector = detector)
+    
+    def face_encoding(self):
+        return compare.face_encodings(self.parent_image.getimg(), [self.face])[0]
        
     def getimg(self):
         x = self.face.left()
