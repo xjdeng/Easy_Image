@@ -1,5 +1,5 @@
 from path import Path as path
-import python_pixabay
+import pixabay as python_pixabay
 import tempfile
 from sklearn.externals import joblib
 import os
@@ -73,8 +73,8 @@ def query(*args, **kwargs):
         return cache[(args, json.dumps(kwargs))][0]
     except KeyError:
         update_api_key()
-        pix = python_pixabay.Pixabay(api_key)
-        results = pix.image_search(*args, **kwargs)
+        pix = python_pixabay.Image(api_key)
+        results = pix.search(*args, **kwargs)
         update_cache((args, json.dumps(kwargs)), results)
         return results
 
