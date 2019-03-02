@@ -91,4 +91,5 @@ def pred_vector(cv2_img):
     img_pil = cv2_to_PIL(cv2_img)
     raw = PIL_to_raw(img_pil)
     preds = raw[0]
-    return np.array([np.exp(p) for p in preds])
+    result = np.array([np.exp(p) for p in preds])
+    return result / sum(result)
