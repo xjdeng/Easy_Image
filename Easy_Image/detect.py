@@ -435,6 +435,13 @@ Like show() but plots the image using Matplotlib
         """
         plt.imshow(cv2.cvtColor(self.getimg(), cv2.COLOR_BGR2RGB))
     
+    def pred_vector(self, mod = imagenet_model):
+        """
+Return the entire vector of imagenet predictions
+        """
+        classify.choose_model(mod)
+        return classify.pred_vector(self.getimg())
+    
     def resize(self, width, height, inplace = True):
         """
 Resizes the image to the specified width and height
