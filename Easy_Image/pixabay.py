@@ -8,6 +8,7 @@ import warnings
 import json
 import requests
 import numpy as np
+import re
 
 cache_filename = "pixabay_cache.pkl"
 
@@ -48,15 +49,34 @@ environment variable or set it by calling the set_key() function.""".replace("\n
 
 update_api_key()
 
-def download(url, folder):
-    filename = str(path(url).name)
-    res = requests.get(url)
-    res.raise_for_status()
-    f = open(folder + "/" + filename, 'wb')
-    for chunk in res:
-        f.write(chunk)
+def cdn_to_larger(url):
+    newname = re.sub("__[0-9]+","_{}".format("960_720"), url)
+    return newname
 
-def download_query(myquery, destination, imgtype = "largeImageURL"):
+def download(url, folder = "./"):
+    try:
+        filename = str(path(url).name)
+        res = requests.get(url)
+        res.raise_for_status()
+        f = open(folder + "/" + filename, 'wb')
+        for chunk in res:
+            f.write(chunk)
+    except Exception:
+        pass
+        
+def download_google_file(google_file, folder = "./"):
+    """
+Do a Google image search limited to pixabay.com and get the download file
+using these instructions:
+https://github.com/fastai/course-v3/blob/master/nbs/dl1/lesson2-download.ipynb
+Then use this script to grab the higher res photos.
+    """
+    f = open(google_file,'r')
+    urls = f.read().split("\n")
+    f.close()
+    [download(cdn_to_larger(url), folder) for url in urls]
+
+def download_query(myquery, destination = "./", imgtype = "largeImageURL"):
     imglist = images_from_query(myquery, imgtype)
     [download(url, destination) for url in imglist]
 
@@ -82,7 +102,7 @@ def query_all_pages(*args, **kwargs):
     results = []
     initial = query(*args, **kwargs)
     perpage = len(initial['hits'])
-    totalHits = initial['totalHits']
+    totalHits = min(500,initial['totalHits'])
     pages1 = int(np.floor(totalHits/perpage))
     for p in range(0, pages1):
         results.append(query(*args, **kwargs, page = p + 1))
