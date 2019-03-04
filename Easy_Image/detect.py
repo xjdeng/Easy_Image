@@ -145,7 +145,7 @@ def imread(url):
     if "?" in filename:
         filename = tempdir.name + "/tmp"
     f = open(filename, 'wb')
-    for chunk in res:
+    for chunk in res.iter_content(100000):
         f.write(chunk)
     img = cv2.imread(filename)
     f.close()

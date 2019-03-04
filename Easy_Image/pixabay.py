@@ -59,7 +59,7 @@ def download(url, folder = "./"):
         res = requests.get(url)
         res.raise_for_status()
         f = open(folder + "/" + filename, 'wb')
-        for chunk in res:
+        for chunk in res.iter_content(100000):
             f.write(chunk)
     except Exception:
         pass
