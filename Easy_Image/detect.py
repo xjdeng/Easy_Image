@@ -374,7 +374,7 @@ Detects faces in an image then creates a new image with green rectangles
 drawn around the faces (at least in the default option.)
         """
         faces = self.detect_faces(detector = detector)
-        nimg = copy.deepcopy(self._img)
+        nimg = copy.deepcopy(self.getimg())
         for f in faces:
             f0 = f.face
             x = f0.left()
@@ -478,7 +478,7 @@ See: https://www.pyimagesearch.com/2017/01/02/rotate-images-correctly-with-openc
         """
 Save the image at the new path: newpath
         """
-        return cv2.imwrite(newpath, self._img)
+        return cv2.imwrite(newpath, self.getimg())
     
     def show(self, flag = cv2.WINDOW_NORMAL):
         """
