@@ -18,13 +18,14 @@ from imutils import face_utils, rotate_bound
 import face_recognition_models as frm
 #from skimage.io import imread
 from urllib.error import URLError, HTTPError
-from skimage.io import imread
+#from skimage.io import imread
 import warnings
 import random
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture as GMM
 from sklearn.metrics import silhouette_score
 from matplotlib import pyplot as plt
+import tempfile, requests
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
 mypath = os.path.abspath(__file__)
@@ -135,6 +136,21 @@ def get_all_files(folder):
     for i in folders:
         result += get_all_files(i)
     return result
+
+def imread(url):
+    tempdir = tempfile.TemporaryDirectory()
+    res = requests.get(url)
+    res.raise_for_status()
+    filename = tempdir.name + "/" + str(path(url).name)
+    if "?" in filename:
+        filename = tempdir.name + "/tmp"
+    f = open(filename, 'wb')
+    for chunk in res:
+        f.write(chunk)
+    img = cv2.imread(filename)
+    f.close()
+    tempdir.cleanup()
+    return img
 
 def load_image_dir(mydir, recursive = False, maximgs = None, strout = False):
     """
@@ -320,8 +336,8 @@ and load that image.
             if myinput.startswith("http"):
                 try:
                     img = imread(myinput)
-                    self._img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
-                    #self._img = img
+                    #self._img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+                    self._img = img
                     self.path = None
                 except (URLError, HTTPError, AttributeError):
                     raise(NotAnImage)
@@ -499,6 +515,41 @@ Get a numpy signature of the image, which is its resized image flattened.
         """
         tmp = self.resize(width, height, False)
         return tmp.getimg().flatten()
+    
+class EasyImageURL(EasyImage):
+    """
+Although you can pass a URL to load an image into EasyImage, this is the
+preferred class. Images aren't loaded until they're ready
+    """
+    def __init__(self, url):
+        if (isinstance(url, str)) or (isinstance(url, bytes)):
+            if isinstance(url, bytes):
+                url = url.decode('ascii','ignore')
+        else:
+            raise(InvalidURL)
+        self.url = url
+        self._img = None
+        self.path = None
+    
+    def getimg(self):
+        """
+Return the image. If it wasn't downloaded, download it first.
+        """
+        if self._img is None:
+            try:
+                img = imread(self.url)
+                #self._img = cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+                self._img = img
+            except (URLError, HTTPError, AttributeError):
+                raise(InvalidURL)
+        return self._img
+    
+    def resize(self, width, height, inplace = True):
+        """
+Resizes the image. The inplace option is just a dummy for compatibility
+        """
+        return EasyImage(cv2.resize(self.getimg(), (width, height)))
+            
 
 class EasyImageFile(EasyImage):
     """
@@ -715,6 +766,9 @@ class NotAnImage(Exception):
 class NotFace(Exception):
     pass
 #TODO: Add more functionality and information to this exception
+    
+class InvalidURL(Exception):
+    pass
 
 class InvalidOperation(Exception):
     pass
