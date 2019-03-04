@@ -8,6 +8,9 @@ try:
 except ImportError:
     import detect
     
+import tempfile, time
+import EasyWebdriver
+
 up = 38
 down = 40
 left = 37
@@ -137,7 +140,38 @@ def load_images():
                                          title = "Select Images:")
     return detect.EasyImageFileList(imgfiles)
 
-def slideshow_simple(img_list, delay = 1):
+def slideshow_browser(img_list, browser = None, \
+                      delay = 1, imgfunc = None, *args, **kwargs):
+    i = 0
+    if browser is None:
+        browser = EasyWebdriver.Chrome()
+    tempdir1 = tempfile.TemporaryDirectory()
+    filename = tempdir1.name + "/tmp.jpg"
+    img_list[0].save(filename)
+    browser.get(filename)
+    input("Press Enter to continue...")
+    i = 1
+    while i < len(img_list):
+        if tempdir1 is not None:
+            tempdir2 = tempfile.TemporaryDirectory()
+            filename = tempdir2.name + "/tmp.jpg"
+            img_list[i].save(filename)
+            browser.get(filename)
+            tempdir1.cleanup()
+            tempdir1 = None
+        else:
+            tempdir1 = tempfile.TemporaryDirectory()   
+            filename = tempdir1.name + "/tmp.jpg"
+            img_list[i].save(filename)
+            browser.get(filename)
+            tempdir2.cleanup()
+            tempdir2 = None
+        time.sleep(delay)
+        i += 1
+    return None
+        
+
+def slideshow_simple(img_list, delay = 1, imgfunc = None, *args, **kwargs):
     wname = "window"
     cv2.namedWindow(wname, cv2.WINDOW_NORMAL)
     cv2.imshow(wname, img_list[0].getimg())
