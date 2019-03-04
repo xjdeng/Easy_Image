@@ -969,6 +969,33 @@ class EasyImageFileList(EasyImageList):
     
     def remove_exif(self):
         [img.remove_exif() for img in self]
+        
+def EasyImageURLList(EasyImageList):
+    """
+    Untested
+    """
+    
+    def __init__(self, x = []):
+        super(EasyImageURLList, self).__init__(x)
+
+    def __add__(self, x):
+        if isinstance(x, EasyImageURLList):
+            return EasyImageURLList(super(EasyImageURLList, self).__add__(x))
+    
+    def __iadd__(self, x):
+        if isinstance(x, EasyImageURLList):
+            return super(EasyImageURLList, self).__iadd__(x)
+
+    def append(self, x):
+        if isinstance(x, EasyImageURL):
+            super(EasyImageURLList, self).append(x)
+        else:
+            try:
+                tmp = EasyImageURL(x)
+                super(EasyImageURLList, self).append(tmp)
+            except NotAnImage:
+                pass
+    
 
 class EasyFaceList(EasyImageList):
     
