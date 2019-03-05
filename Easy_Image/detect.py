@@ -26,6 +26,8 @@ from sklearn.mixture import GaussianMixture as GMM
 from sklearn.metrics import silhouette_score
 from matplotlib import pyplot as plt
 import tempfile, requests
+from PIL import Image
+from io import BytesIO
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
 mypath = os.path.abspath(__file__)
@@ -138,6 +140,11 @@ def get_all_files(folder):
     return result
 
 def imread(url):
+    r = requests.get(url)
+    img = np.array(Image.open(BytesIO(r.content)))
+    return cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+
+def imread_old(url):
     tempdir = tempfile.TemporaryDirectory()
     res = requests.get(url)
     res.raise_for_status()
