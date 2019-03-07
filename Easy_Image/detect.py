@@ -389,6 +389,17 @@ Dummy method, only useful when called from an EasyImageFile obj
         """
         x = detector
         return self.detect_faces(x)
+    
+    def dhash(self, hashSize=8):
+        """
+Computes the dhash of the image.
+See: https://www.pyimagesearch.com/2017/11/27/image-hashing-opencv-python/
+        """
+        gray = get_gray(self)
+        resized = cv2.resize(gray, (hashSize + 1, hashSize))
+        diff = resized[:, 1:] > resized[:, :-1]
+        return sum([2 ** i for (i, v) in enumerate(diff.flatten()) if v])
+        
 
     def draw_faces(self, detector = default_detector, color = (0, 255, 0),\
                    width = 2):
