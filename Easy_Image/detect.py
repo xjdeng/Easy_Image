@@ -16,9 +16,7 @@ import numpy as np
 from path import Path as path
 from imutils import face_utils, rotate_bound
 import face_recognition_models as frm
-#from skimage.io import imread
 from urllib.error import URLError, HTTPError
-#from skimage.io import imread
 import warnings
 import random
 from sklearn.cluster import KMeans
@@ -28,6 +26,7 @@ from matplotlib import pyplot as plt
 import tempfile, requests
 from PIL import Image
 from io import BytesIO
+import imageio
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
 mypath = os.path.abspath(__file__)
@@ -141,8 +140,19 @@ def get_all_files(folder):
 
 def imread(url):
     r = requests.get(url)
-    img = np.array(Image.open(BytesIO(r.content)))
-    return cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
+    img1 = Image.open(BytesIO(r.content))
+    img2 = np.array(img1)
+    try:
+        return cv2.cvtColor(img2,cv2.COLOR_BGR2RGB)
+    except cv2.error:
+        tmpdir = tempfile.TemporaryDirectory()
+        tmpimg = tmpdir.name + "/tmp.gif"
+        #https://stackoverflow.com/questions/48163539/how-to-read-gif-from-url-using-opencv-python
+        img1.save(tmpimg)
+        gif = imageio.mimread(tmpimg)
+        return cv2.cvtColor(gif[0], cv2.COLOR_RGB2BGR)
+        
+        
 
 def imread_old(url):
     tempdir = tempfile.TemporaryDirectory()
