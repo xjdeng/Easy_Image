@@ -2,6 +2,7 @@ import numpy as np
 from path import Path as path
 from PIL import Image
 import random
+import time
 
 
 def _isimage(myfile):
@@ -54,17 +55,17 @@ def run_eqwt(basedir, maxresults, minfiles = 10):
     return run(basedir, maxresults, lambda x:1, minfiles)
 
 def run_newer_bias(basedir, maxresults, minfiles = 10):
-    f = lambda x:1.0/np.log(x.ctime)
+    f = lambda x:1.0/np.log(time.time() - x.ctime)
     return run(basedir, maxresults, f, minfiles)
 
 def run_very_recent_bias(basedir, maxresults, minfiles = 10):
-    return run(basedir, maxresults, lambda x:1.0/x.ctime, minfiles)
+    return run(basedir, maxresults, lambda x:1.0/(time.time() - x.ctime), minfiles)
 
 def run_smaller_bias(basedir, maxresults, minfiles = 10):
     return run(basedir, maxresults, lambda x:1.0/len(x.files()), minfiles)
 
 def run_recent_bias_with_files(basedir, maxresults, minfiles = 10):
-    f = lambda x:len(x.files())/np.log(x.ctime)
+    f = lambda x:len(x.files())/np.log(time.time() - x.ctime)
     return run(basedir, maxresults, f, minfiles)
 
 def train_test_split(source, dest, valid_pct, inplace = False):
