@@ -577,7 +577,7 @@ the local disk.  The self.path variable retains the path to the image.
     
     def __init__(self, mypath):
         if isinstance(mypath, str):
-            self.path = mypath
+            self.path = path(mypath).abspath()
             self._img = verify_img(cv2.imread(mypath))
         else:
             raise(NotAnImage)
