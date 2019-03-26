@@ -21,7 +21,7 @@ Open a Terminal or Command Prompt
 
 You'll need to set up a few dependencies before running:
 
-`conda install path.py numpy opencv Pillow scikit-image`
+`conda install path.py numpy opencv Pillow scikit-image scikit-learn pandas`
 
 ```conda install -c pytorch pytorch``` (alternatively, ```conda install -c pytorch pytorch-cpu``` if you don't have a supported GPU).  If you have an older GPU but pytorch complains that it's CUDA capabilities are too old but you really want to use the GPU, then your only choices are to either compile it from source if you want the latest Pytorch ([see my video here](https://www.youtube.com/watch?v=sGWLjbn5cgs)) or to install Pytorch 0.3.0 to save yourself a headache by following the instructions below.
 
@@ -117,7 +117,7 @@ Since the faces were stored using EXIF tags in the file tests/woman-3046960_640.
 
 `cv2.waitKey(0)`
 
-##### Detect objects in an image (requires Keras):
+##### Detect objects in an image (requires Pytorch):
 
 ```
 angryimg.classify()
