@@ -9,7 +9,6 @@ except ImportError:
     import detect
     
 import tempfile, time
-import EasyWebdriver
 
 up = 38
 down = 40
@@ -142,6 +141,12 @@ def load_images():
 
 def slideshow_browser(img_list, browser = None, \
                       delay = 1, imgfunc = None, *args, **kwargs):
+    try:
+        import EasyWebdriver
+    except ImportError as e:
+        print("You need to install EasyWebdriver for this:")
+        print("https://github.com/xjdeng/EasyWebdriver")
+        raise(e)
     i = 0
     if browser is None:
         browser = EasyWebdriver.Chrome()
