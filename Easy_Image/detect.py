@@ -2,15 +2,16 @@ try:
     from . import exif_json
     from . import classify_pytorch as classify
     from . import colordescriptor as cd
+    from . import compare
 except ImportError:
     import exif_json
     import colordescriptor as cd
+    import compare
     try:
         import classify_pytorch as classify
     except ImportError:
         print("Warning: Pytorch not found. You will not be able to classify images!")
 import copy, cv2, dlib, os
-import face_recognition
 import numpy as np
 from path import Path as path
 from imutils import face_utils, rotate_bound
@@ -753,9 +754,9 @@ distance between them, set threshold = None.
         encoding1 = self.face_encoding()
         encoding2 = face.face_encoding()
         if threshold is None:
-            return face_recognition.face_distance([encoding1], encoding2)[0]
+            return compare.face_distance([encoding1], encoding2)[0]
         else:
-            return face_recognition.compare_faces([encoding1], encoding2, threshold)[0] 
+            return compare.compare_faces([encoding1], encoding2, threshold)[0] 
     
     def detect_faces(self):
         return EasyFaceList([self])
@@ -764,7 +765,7 @@ distance between them, set threshold = None.
         return super(EasyFace, self).detect_faces(detector = detector)
     
     def face_encoding(self):
-        return face_recognition.face_encodings(self.parent_image.getimg(), [self.face])[0]
+        return compare.face_encodings(self.parent_image.getimg(), [self.face])[0]
        
     def getimg(self):
         x = self.face.left()
