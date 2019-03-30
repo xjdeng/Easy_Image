@@ -372,6 +372,13 @@ This require Pytorch 0.3.0
         classify.choose_model(mod)
         return classify.classify(self.getimg())
     
+    def compare(self, img2, bins = (8,12,3)):
+        if isinstance(img2, str):
+            img2 = EasyImageFile(img2)
+        histA = self.describe()
+        histB = img2.describe()
+        return cd.chi2_distance(histA,histB)
+    
     def describe(self, bins = (8,12,3)):
         """
 Get a color histogram for the current image, used to "summarize" it. For a 
