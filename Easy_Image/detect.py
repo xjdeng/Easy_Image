@@ -151,23 +151,7 @@ def imread(url):
         img1.save(tmpimg)
         gif = imageio.mimread(tmpimg)
         return cv2.cvtColor(gif[0], cv2.COLOR_RGB2BGR)
-        
-        
 
-def imread_old(url):
-    tempdir = tempfile.TemporaryDirectory()
-    res = requests.get(url)
-    res.raise_for_status()
-    filename = tempdir.name + "/" + str(path(url).name)
-    if "?" in filename:
-        filename = tempdir.name + "/tmp"
-    f = open(filename, 'wb')
-    for chunk in res.iter_content(100000):
-        f.write(chunk)
-    img = cv2.imread(filename)
-    f.close()
-    tempdir.cleanup()
-    return img
 
 def load_image_dir(mydir, recursive = False, maximgs = None, strout = False):
     """
