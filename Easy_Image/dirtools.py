@@ -23,6 +23,11 @@ def move(mylist, mydest):
     [f.move(mydest) for f in mylist]
 
 def run(basedir, maxresults, scheme, minfiles = 10):
+    folders = path(basedir).dirs()
+    if len(folders) == 0:
+        files = path(basedir).files()
+        random.shuffle(files)
+        return files[0:min(minfiles, len(files))]
     dirfiles = {}
     for d in path(basedir).walkdirs():
         files = d.files()
