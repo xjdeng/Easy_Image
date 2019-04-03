@@ -27,7 +27,7 @@ def run(basedir, maxresults, scheme, minfiles = 10):
     if len(folders) == 0:
         files = path(basedir).files()
         random.shuffle(files)
-        return files[0:min(minfiles, len(files))]
+        return files[0:min(maxresults, len(files))]
     dirfiles = {}
     for d in path(basedir).walkdirs():
         files = d.files()
