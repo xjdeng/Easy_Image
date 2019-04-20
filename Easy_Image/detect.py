@@ -139,8 +139,11 @@ def get_all_files(folder):
     return result
 
 def imread(url):
-    r = requests.get(url)
-    img1 = Image.open(BytesIO(r.content))
+    if isinstance(url, str):
+        r = requests.get(url)
+        img1 = Image.open(BytesIO(r.content))
+    else:
+        img1 = url
     img2 = np.array(img1)
     try:
         return cv2.cvtColor(img2,cv2.COLOR_BGR2RGB)
