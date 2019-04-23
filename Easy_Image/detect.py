@@ -95,7 +95,12 @@ Will not color your image, unfortunately, but if it contains only 2 dimensions
 (gray), then it'll add a 3rd dimension with the same data.
     """
     if isinstance(img, str):
-        img = cv2.imread(img)
+        try:
+            img = readgif(img)
+        except ValueError:
+            img = cv2.imread(img)
+    if img is None:
+        raise NotAnImage
     dims = len(img.shape)
     if dims == 2:
         h,w = img.shape
