@@ -83,7 +83,7 @@ Not intended for the average end-user.
     if isinstance(img, EasyImage):
         img_ref = img.getimg()
     else:
-        img_ref = cv2.imread(img)
+        img_ref = smartload(img)
         if img_ref is None:
             raise(NotAnImage)
     gray1 = cv2.cvtColor(img_ref, cv2.COLOR_BGR2GRAY)
