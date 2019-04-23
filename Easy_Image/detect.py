@@ -154,6 +154,11 @@ def get_all_files(folder):
         result += get_all_files(i)
     return result
 
+def readgif(imgfile):
+    gif = imageio.mimread(imgfile)
+    gif0 = smartload(gif[0])
+    return cv2.cvtColor(gif0, cv2.COLOR_RGB2BGR)    
+
 def imread(url):
     r = requests.get(url)
     img1 = Image.open(BytesIO(r.content))
@@ -165,9 +170,7 @@ def imread(url):
         tmpimg = tmpdir.name + "/tmp.gif"
         #https://stackoverflow.com/questions/48163539/how-to-read-gif-from-url-using-opencv-python
         img1.save(tmpimg)
-        gif = imageio.mimread(tmpimg)
-        gif0 = smartload(gif[0])
-        return cv2.cvtColor(gif0, cv2.COLOR_RGB2BGR)
+        return readgif(tmpimg)
 
 
 def load_image_dir(mydir, recursive = False, maximgs = None, strout = False):
