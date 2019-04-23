@@ -89,6 +89,22 @@ Not intended for the average end-user.
     gray1 = cv2.cvtColor(img_ref, cv2.COLOR_BGR2GRAY)
     return gray1
 
+def smartload(img):
+    """
+Will not color your image, unfortunately, but if it contains only 2 dimensions
+(gray), then it'll add a 3rd dimension with the same data.
+    """
+    if isinstance(img, str):
+        img = cv2.imread(img)
+    dims = len(img.shape)
+    if dims == 2:
+        h,w = img.shape
+        img2 = np.array((h,w,3))
+        for i in range(0,3):
+            img2[:,:,i] = img
+        img = img2
+    return img
+
 def haarcascades():
     """
 Get a list of Haar Cascades included in the package. Not intended for use in
@@ -139,11 +155,8 @@ def get_all_files(folder):
     return result
 
 def imread(url):
-    if isinstance(url, str):
-        r = requests.get(url)
-        img1 = Image.open(BytesIO(r.content))
-    else:
-        img1 = url
+    r = requests.get(url)
+    img1 = Image.open(BytesIO(r.content))
     img2 = np.array(img1)
     try:
         return cv2.cvtColor(img2,cv2.COLOR_BGR2RGB)
@@ -582,7 +595,7 @@ the local disk.  The self.path variable retains the path to the image.
     def __init__(self, mypath):
         if isinstance(mypath, str):
             self.path = path(mypath).abspath()
-            self._img = verify_img(cv2.imread(mypath))
+            self._img = verify_img(smartload(mypath))
         else:
             raise(NotAnImage)
 
