@@ -99,11 +99,11 @@ Will not color your image, unfortunately, but if it contains only 2 dimensions
     dims = len(img.shape)
     if dims == 2:
         h,w = img.shape
-        img2 = np.array((h,w,3))
+        img2 = np.zeros((h,w,3))
         for i in range(0,3):
             img2[:,:,i] = img
         img = img2
-    return img
+    return img.astype('uint8')
 
 def haarcascades():
     """
@@ -166,7 +166,8 @@ def imread(url):
         #https://stackoverflow.com/questions/48163539/how-to-read-gif-from-url-using-opencv-python
         img1.save(tmpimg)
         gif = imageio.mimread(tmpimg)
-        return cv2.cvtColor(gif[0], cv2.COLOR_RGB2BGR)
+        gif0 = smartload(gif[0])
+        return cv2.cvtColor(gif0, cv2.COLOR_RGB2BGR)
 
 
 def load_image_dir(mydir, recursive = False, maximgs = None, strout = False):
@@ -346,7 +347,7 @@ and load that image.
     def __init__(self, myinput):
         if isinstance(myinput, np.ndarray):
             self.path = None
-            self._img = verify_img(myinput)
+            self._img = smartload(verify_img(myinput))
         elif (isinstance(myinput, str)) or (isinstance(myinput, bytes)):
             if isinstance(myinput, bytes):
                 myinput = myinput.decode('ascii','ignore')
