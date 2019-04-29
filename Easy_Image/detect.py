@@ -8,6 +8,7 @@ except ImportError:
     import colordescriptor as cd
     import compare
     try:
+        import torch
         import classify_pytorch as classify
     except ImportError:
         print("Warning: Pytorch not found. You will not be able to classify images!")
@@ -27,12 +28,14 @@ import tempfile, requests
 from PIL import Image
 from io import BytesIO
 import imageio
+from fastai import vision
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
 mypath = os.path.abspath(__file__)
 dir_path = os.path.dirname(mypath)
 haarpath = dir_path + "/haarcascades/"
 lbppath = dir_path + "/lbpcascades/"
+haar_filter = vision.load_learner(dir_path + "/misc", "haar_filter")
 
 default_predictor = dlib.shape_predictor(frm.pose_predictor_model_location())
 
@@ -125,6 +128,11 @@ in the app you're building; just for your own information.
     """
     lp = path(lbppath)
     return lp.files()
+
+def opencv_to_fastai(imgarray):
+    pilimg = cv2.cvtColor(imgarray,cv2.COLOR_BGR2RGB)
+    img = vision.Image(vision.pil2tensor(pilimg,np.float32).div_(255))
+    return img
 
 def cluster_dir(mydir, minclusters, maxclusters):
     filelist = load_image_dir(mydir)
@@ -398,7 +406,7 @@ https://www.pyimagesearch.com/2014/12/01/complete-guide-building-image-search-en
         mycd = cd.ColorDescriptor(bins)
         return mycd.describe(self.getimg())
                 
-    def detect_faces(self, detector = default_detector):
+    def detect_faces(self, detector = default_detector, verify = True):
         """
 Returns a list of faces detected in the image; each face is represented using 
 an EasyFace object.
@@ -407,14 +415,18 @@ an EasyFace object.
         if len(faces) == 0:
             return EasyFaceList()
         else:
-            return EasyFaceList([EasyFace(self, face) for face in faces])
+            if verify == False:
+                return EasyFaceList([EasyFace(self, face) for face in faces])
+            else:
+                return EasyFaceList([EasyFace(self, face) for face in faces \
+                       if(str(haar_filter.predict(opencv_to_fastai(face.getimg()))) == "yes")])
 
-    def detect_faces_simple(self, detector = default_detector):
+    def detect_faces_simple(self, detector = default_detector, verify = True):
         """
 Dummy method, only useful when called from an EasyImageFile obj
         """
         x = detector
-        return self.detect_faces(x)
+        return self.detect_faces(x, verify)
     
     def dhash(self, hashSize=8):
         """
@@ -655,7 +667,8 @@ image classification algorithm.
         exif_json.save(self.path, output, classify_field)
         return classes
             
-    def detect_faces(self, cvv = None, dlibv = None, detector = default_detector):
+    def detect_faces(self, cvv = None, dlibv = None, detector = default_detector,\
+                     verify = True):
         """
 The all-purpose facial detection algorithm for image files. First, it'll search
 for faces already cached in the EXIF data and if found, return those. 
@@ -672,9 +685,14 @@ ignore the faces in the EXIF if the versions don't match.
         if test is None:
             return EasyFaceList()
         elif len(test) == 0:
-            return self.force_detect_faces(detector)
+            result = self.force_detect_faces(detector)
         else:
-            return test
+            result = test
+        if verify == False:
+            return result
+        else:
+            return EasyFaceList([face for face in result \
+                       if(str(haar_filter.predict(opencv_to_fastai(face.getimg()))) == "yes")])
         
     def detect_faces_simple(self, cvv = None, dlibv = None, \
                             detector = default_detector):
