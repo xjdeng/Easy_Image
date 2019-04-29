@@ -415,9 +415,12 @@ an EasyFace object.
         if len(faces) == 0:
             return EasyFaceList()
         else:
+            result= EasyFaceList([EasyFace(self, face) for face in faces])
             if verify == False:
-                return EasyFaceList([EasyFace(self, face) for face in faces])
+                return result
             else:
+                return EasyFaceList([face for face in result \
+                                     if(str(haar_filter.predict(opencv_to_fastai(face.getimg()))) == "yes")])
                 return EasyFaceList([EasyFace(self, face) for face in faces \
                        if(str(haar_filter.predict(opencv_to_fastai(face.getimg()))) == "yes")])
 
