@@ -15,6 +15,7 @@ import copy, cv2, dlib, os
 import numpy as np
 from path import Path as path
 from imutils import face_utils, rotate_bound
+import imutils
 import face_recognition_models as frm
 from urllib.error import URLError, HTTPError
 import warnings
@@ -559,6 +560,15 @@ Get a numpy signature of the image, which is its resized image flattened.
         """
         tmp = self.resize(width, height, False)
         return tmp.getimg().flatten()
+    
+    def thumbnail(self, dims = 250):
+        img = self.getimg()
+        h,w = img.shape[0:2]
+        if h > w:
+            thumb = imutils.resize(img, width = dims)
+        else:
+            thumb = imutils.resize(img, height = dims)
+        return EasyImage(thumb[0:dims,0:dims])
     
 class EasyImageURL(EasyImage):
     """
