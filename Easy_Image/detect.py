@@ -23,7 +23,6 @@ import random
 from sklearn.cluster import KMeans
 from sklearn.mixture import GaussianMixture as GMM
 from sklearn.metrics import silhouette_score
-from matplotlib import pyplot as plt
 import tempfile, requests
 from PIL import Image
 from io import BytesIO
@@ -486,15 +485,6 @@ black pixels are transparent.
         for r in reblacken:
             background[r[0], r[1]] = np.array([0,0,0])
         return EasyImage(background)
-                
-        
-        
-    
-    def plot(self):
-        """
-Like show() but plots the image using Matplotlib
-        """
-        plt.imshow(cv2.cvtColor(self.getimg(), cv2.COLOR_BGR2RGB))
     
     def pred_vector(self, mod = imagenet_model):
         """
