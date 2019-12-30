@@ -39,6 +39,15 @@ TIFF = types['TIFF'] = 'TIFF'
 
 image_fields = ['path', 'type', 'file_size', 'width', 'height']
 
+def copy_autorename(f, dest):
+    if path("{}/{}".format(dest, f.name)).exists():
+        i = 1
+        while path("{}/{}_{}.{}".format(dest, f.namebase, i, f.ext)).exists():
+            i += 1
+        f.copy("{}/{}_{}.{}".format(dest, f.namebase, i, f.ext))
+    else:
+        f.copy(dest)
+
 
 class Image(collections.namedtuple('Image', image_fields)):
 
@@ -390,12 +399,13 @@ Copies all images in the source directory with an aspect ratio close to w:h
 to the destination directory
     """
     tgtratio = w/h
-    for f in path(source).files():
+    for f in path(source).walkfiles():
         try:
             a,b = get_image_size(f)
             ratio = a/b
             if abs(tgtratio - ratio)/tgtratio < tol:
-                f.copy(destination)
+                #f.copy(destination)
+                copy_autorename(f, destination)
         except UnknownImageFormat:
             pass
         
@@ -421,12 +431,13 @@ def cluster_aspect_ratio(source, destination):
     ratio_dir = {1/4: p_1_4, 1/2: p_1_2, 2/3: p_2_3, 3/4: p_3_4, 1: p_1_1, \
                  4/3: p_4_3, 3/2: p_3_2, 2: p_2_1, 4: p_4_1}
     keys = list(ratio_dir.keys())
-    for f in path(source).files():
+    for f in path(source).walkfiles():
         try:
             a,b = get_image_size(f)
             ratio = a/b
             dest = ratio_dir[min(keys, key=lambda x:abs(x-ratio))]
-            f.copy(dest)
+            #f.copy(dest)
+            copy_autorename(f, dest)
         except UnknownImageFormat:
             pass
     
