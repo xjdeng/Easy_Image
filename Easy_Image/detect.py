@@ -1129,7 +1129,7 @@ def search(img, fileiter, n = 15):
     elif isinstance(img, np.ndarray):
         img = EasyImage(img)
     if isinstance(fileiter, str):
-        fileiter = path(fileiter).files()
+        fileiter = path(fileiter).walkfiles()
     imgdesc = np.array(img.describe())
     scores = []
     for f in fileiter:
