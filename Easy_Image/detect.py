@@ -27,6 +27,7 @@ import tempfile, requests
 from PIL import Image
 from io import BytesIO
 import imageio
+import heapq
 warnings.filterwarnings("ignore", message="Unverified HTTPS request is being made")
 
 mypath = os.path.abspath(__file__)
@@ -1121,3 +1122,26 @@ def faces_in_dir(inputdir, detector = default_detector):
         except (NotAnImage, NotFace):
             pass
     return faces
+
+def search(img, fileiter, n = 15):
+    if isinstance(img, str):
+        img = EasyImageFile(img)
+    elif isinstance(img, np.ndarray):
+        img = EasyImage(img)
+    imgdesc = np.array(img.describe())
+    scores = []
+    for f in fileiter:
+        try:
+            newimg = EasyImageFile(f)
+        except NotAnImage:
+            continue
+        score = np.linalg.norm(imgdesc - np.array(newimg.describe()))
+        scores.append((f,score))
+    if len(scores) == 0:
+        return []
+    if len(scores) <= n:
+        scores2 = scores
+    else:
+        scores2 = heapq.nsmallest(n, scores, key=lambda x:x[1])
+    return [s[0] for s in scores2]
+        
