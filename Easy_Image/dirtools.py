@@ -56,6 +56,19 @@ def run(basedir, maxresults, scheme, minfiles = 10):
             goahead = True
     return results
 
+def run_rand(basedir, maxresults):
+    files = list(path(basedir).walkfiles())
+    random.shuffle(files)
+    n = len(files)
+    i = 0
+    results = []
+    while (i < n) & (len(results) < maxresults):
+        test = files[i]
+        if _isimage(test):
+            results.append(test)
+        i += 1
+    return results
+
 def run_eqwt(basedir, maxresults, minfiles = 10):
     return run(basedir, maxresults, lambda x:1, minfiles)
 
