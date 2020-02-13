@@ -69,3 +69,8 @@ def maskimg(ei, mask):
             if mask2[i,j] == 0:
                 newimg[i,j] = white
     return detect.EasyImage(newimg)
+
+def extract_obj(ei, obj="person"):
+    masks, _, pred_class = get_prediction(ei)
+    indices = [i for i, x in enumerate(pred_class) if x == obj]
+    return detect.EasyImageList([maskimg(ei, masks[i]) for i in indices])
