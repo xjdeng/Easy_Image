@@ -1,7 +1,7 @@
 import torchvision.transforms as T
 import torchvision
 import cv2
-from Easy_Image import detect
+from Easy_Image import detect, get_image_size as gis
 import numpy as np
 from path import Path as path
 from rectpack import newPacker
@@ -167,22 +167,58 @@ def extract_masks(ei, outdir = None, obj = "person"):
     return output
     
 
-def extract_masks0(ei, outdir = None, obj = "person"):
-    masks, _, pred_class = get_prediction(ei)
-    indices = [i for i, x in enumerate(pred_class) if x == obj]
-    output = detect.EasyImageList()
-    for i in indices:
-        test = maskimg(ei, masks[i])
-        if test is not None:
-            output.append(test)
-            if outdir:
-                newfile = path("{}/{}.png".format(outdir, str(uuid.uuid4())))
-                while newfile.exists():
-                    newfile = path("{}/{}.png".format(outdir, str(uuid.uuid4())))
-                test.save(newfile)                
-    return output
+def generate_from_dir(maskdir, outdir, h, w, n = 1, max_h = 500, max_w = 500):
+    """
+    Important
+    """
+    files = path(maskdir).files()
+    path(outdir).mkdir_p()
+    rectangles = []
+    for i,f in enumerate(files):
+        try:
+            w0,h0 = gis.get_image_size(f)
+            if ((h0 > max_h) or (w0 > max_w)):
+                if h0/max_h > w0/max_w:
+                    new_h = max_h
+                    new_w = int(round(new_h*w0/h0))
+                else:
+                    new_w = max_w
+                    new_h = int(round(new_w*h0/w0))
+                w0, h0 = new_w, new_h
+            rectangles.append((h0, w0, i))
+        except gis.UnknownImageFormat:
+            pass
+    random.shuffle(rectangles)
+    bins = [(h,w)]*n
+    packer = newPacker(rotation=False)
+    for r in rectangles:
+        packer.add_rect(*r)
+    for b in bins:
+        packer.add_bin(*b)
+    packer.pack()
+    all_rects = packer.rect_list()
+    nbins = len(packer)
+    bindict = defaultdict(list)
+    for rect in all_rects:
+        b, x0, y0, ww, hh, rid = rect
+        x1 = x0 + ww
+        y1 = y0 + hh
+        bindict[b].append((x0,x1,y0,y1,rid))
+    for i in range(0, nbins):
+        img = 255*np.ones((h,w,3))
+        for x0,x1,y0,y1,rid in bindict[i]:
+            ei = detect.EasyImageFile(files[rid])
+            h0 = x1 - x0
+            w0 = y1 - y0
+            if (h0,w0) != ei.getimg().shape[0:2]:
+                ei.resize(w0, h0)
+            img[x0:x1,y0:y1] = ei.getimg()
+        cv2.imwrite("{}/collage_{}.jpg".format(outdir, i), img)
 
 def extract_dir_masks(imgdir, outdir, obj = "person"):
+    """
+    Important
+    """
     path(outdir).mkdir_p()
     for f in path(imgdir).files():
         try:
@@ -202,7 +238,9 @@ def extract_obj(ei, obj="person"):
             output.append(test)
     return output
 
-def generate_collages(imgdir, outdir, h, w, n = 1, max_h = 500, max_w = 500, obj = "person"):
+
+
+def generate_collages0(imgdir, outdir, h, w, n = 1, max_h = 500, max_w = 500, obj = "person"):
     path(outdir).mkdir_p()
     masks = detect.EasyImageList()
     for f in path(imgdir).files():
