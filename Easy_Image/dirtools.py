@@ -4,6 +4,7 @@ from PIL import Image
 import cv2
 import random
 import time
+import concurrent.futures
 
 
 def _isimage(myfile):
@@ -17,19 +18,23 @@ def _norm(mylist):
     s = sum(mylist)
     return [i/s for i in mylist]
 
+def _convert_helper(f):
+    ext = f.ext.lower()
+    if (ext == ".jpg") or (ext == ".jpeg"):
+        return
+    img = cv2.imread(f)
+    if img is None:
+        return
+    newname = "{}/{}.jpg".format(str(f.dirname()), f.namebase)
+    cv2.imwrite(newname, img)
+    f.remove()    
+
 def convert_jpeg(files):
     if isinstance(files, str):
         files = path(files).walkfiles()
-    for f in files:
-        ext = f.ext.lower()
-        if (ext == ".jpg") or (ext == ".jpeg"):
-            continue
-        img = cv2.imread(f)
-        if img is None:
-            continue
-        newname = "{}/{}.jpg".format(str(f.dirname()), f.namebase)
-        cv2.imwrite(newname, img)
-        f.remove()
+    with concurrent.futures.ProcessPoolExecutor() as executor:
+        executor.map(_convert_helper, files)
+
 
 def copy(mylist, mydest):
     [f.copy(mydest) for f in mylist]
