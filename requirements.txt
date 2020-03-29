@@ -6,7 +6,7 @@ pandas
 face_recognition_models
 imutils
 scikit-image
-torchvision
+torchvision==0.3.0
 fake-useragent
 dlib
 opencv-python
