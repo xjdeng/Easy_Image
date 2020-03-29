@@ -224,8 +224,9 @@ def extract_dir_masks(imgdir, outdir, obj = "person"):
         try:
             ei = detect.EasyImageFile(f)
             extract_masks(ei, outdir, obj)
-        except detect.NotAnImage:
-            pass
+        except Exception as e:
+            print(e)
+            print(f)
 
 
 def extract_obj(ei, obj="person"):

@@ -1,13 +1,12 @@
 numpy>=1.10
 path.py>=9.0
 piexif>=1.0.13
-Pillow==6.0
+Pillow>=4.2
 pandas
 face_recognition_models
 imutils
 scikit-image
-torch==1.1.0
-torchvision==0.3.0
+torchvision
 fake-useragent
 dlib
 opencv-python
