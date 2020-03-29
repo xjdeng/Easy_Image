@@ -8,6 +8,7 @@ from rectpack import newPacker
 from collections import defaultdict, deque
 import random
 import uuid
+import gc
 
 
 model = torchvision.models.detection.maskrcnn_resnet50_fpn(pretrained=True)
@@ -221,6 +222,7 @@ def extract_dir_masks(imgdir, outdir, obj = "person"):
     """
     path(outdir).mkdir_p()
     for f in path(imgdir).files():
+        gc.collect()
         try:
             ei = detect.EasyImageFile(f)
             extract_masks(ei, outdir, obj)
