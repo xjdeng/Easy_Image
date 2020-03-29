@@ -9,6 +9,6 @@ scikit-image
 torchvision
 fake-useragent
 dlib
-opencv-python==3.4.2.17
+opencv-python
 imageio
 rectpack
