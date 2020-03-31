@@ -227,8 +227,8 @@ def extract_dir_masks(imgdir, outdir, obj = "person"):
         try:
             print(f)
             ei = detect.EasyImageFile(f)
-            extract_masks(ei, outdir, obj)
-            print("Success!")
+            print(len(extract_masks(ei, outdir, obj)))
+            print("Images Found!")
         except Exception as e:
             print(e)
 
