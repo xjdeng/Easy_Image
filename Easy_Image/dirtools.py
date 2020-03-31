@@ -5,6 +5,7 @@ import cv2
 import random
 import time
 import concurrent.futures
+import uuid
 
 
 def _isimage(myfile):
@@ -34,10 +35,16 @@ def convert_jpeg(files):
         files = path(files).walkfiles()
     with concurrent.futures.ProcessPoolExecutor() as executor:
         executor.map(_convert_helper, files)
-
+        
+def randname(f):
+    ext = path(f).ext
+    return str(str(uuid.uuid4())) + ext
 
 def copy(mylist, mydest):
     [f.copy(mydest) for f in mylist]
+    
+def copy_and_rename(mylist, mydest):
+    [f.copy("{}/{}".format(mydest, randname(f))) for f in mylist]
 
 def move(mylist, mydest):
     [f.move(mydest) for f in mylist]
