@@ -225,11 +225,12 @@ def extract_dir_masks(imgdir, outdir, obj = "person"):
     for f in path(imgdir).files():
         gc.collect()
         try:
+            print(f)
             ei = detect.EasyImageFile(f)
             extract_masks(ei, outdir, obj)
+            print("Success!")
         except Exception as e:
             print(e)
-            print(f)
 
 
 def extract_obj(ei, obj="person"):
