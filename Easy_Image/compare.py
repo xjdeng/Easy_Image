@@ -4,6 +4,7 @@
 import dlib
 import face_recognition_models
 import numpy as np
+import warnings
 
 predictor_5_point_model = face_recognition_models.pose_predictor_five_point_model_location()
 pose_predictor_5_point = dlib.shape_predictor(predictor_5_point_model)
@@ -12,7 +13,12 @@ predictor_68_point_model = face_recognition_models.pose_predictor_model_location
 pose_predictor_68_point = dlib.shape_predictor(predictor_68_point_model)
 
 face_recognition_model = face_recognition_models.face_recognition_model_location()
-face_encoder = dlib.face_recognition_model_v1(face_recognition_model)
+try:
+    face_encoder = dlib.face_recognition_model_v1(face_recognition_model)
+except Exception as e:
+    print(e)
+    warnings.warn("Some functionality may be limited!")
+    face_encoder = None
 
 def _css_to_rect(css):
     """
