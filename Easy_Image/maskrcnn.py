@@ -154,6 +154,7 @@ def extract_masks(ei, outdir = None, obj = "person"):
         w1 = y1 - y0
         mask2 = mastermask[x0:x1+1,y0:y1+1]
         newimg = ei.getimg()[x0:x1+1,y0:y1+1]
+        gc.collect()
         for i in range(0,h1):
             for j in range(0, w1):
                 if mask2[i,j] == 0:
