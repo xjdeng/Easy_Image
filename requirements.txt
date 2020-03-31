@@ -3,7 +3,7 @@ path.py>=9.0
 piexif>=1.0.13
 Pillow>=4.2
 pandas
-face_recognition_models==0.1.3
+face_recognition_models==0.2.0
 imutils
 scikit-image
 torchvision
