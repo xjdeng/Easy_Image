@@ -136,7 +136,7 @@ def join_overlapping(rects):
 def extract_masks(img, outdir = None, obj = "person"):
     masks, _, pred_class = get_prediction(img)
     indices = [i for i, x in enumerate(pred_class) if x == obj]
-    ei = detect.EasyImage(cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+    ei = detect.EasyImage(cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR))
     h,w = ei.getimg().shape[0:2]
     mastermask = np.zeros((h,w))
     coords = []
