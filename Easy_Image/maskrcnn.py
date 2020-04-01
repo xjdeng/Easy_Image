@@ -229,7 +229,7 @@ def generate_from_dir(maskdir, outdir, h, w, n = 1, max_h = 500, max_w = 500):
             img[x0:x1,y0:y1] = ei.getimg()
         cv2.imwrite("{}/collage_{}.jpg".format(outdir, i), img)
 
-def extract_dir_masks(imgdir, outdir, obj = "person"):
+def extract_dir_masks(imgdir, outdir, obj = "person", remove = False):
     """
     Important
     """
@@ -243,6 +243,8 @@ def extract_dir_masks(imgdir, outdir, obj = "person"):
             print("Images Found!")
         except Exception as e:
             print(e)
+        if remove:
+            f.remove_p()
 
 
 def extract_obj(ei, obj="person"):
