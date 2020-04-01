@@ -48,12 +48,16 @@ def get_prediction(img, threshold=0.99):
     pred_class = pred_class[:pred_t+1]
     return masks, pred_boxes, pred_class
 
-def maskimg(ei, mask):
+def maskimg(ei, mask, x0 = 0, y0 = 0, x1 = None, y1 = None):
     try:
         h,w = mask.shape
     except ValueError:
         return None
-    x0,y0,x1,y1 = 0,0,h,w
+    #x0,y0,x1,y1 = 0,0,h,w
+    if x1 is None:
+        x1 = h
+    if y1 is None:
+        y1 = w
     for i in range(0, h):
         if any(mask[i,:]):
             x0 = i
@@ -80,12 +84,16 @@ def maskimg(ei, mask):
                 newimg[i,j] = white
     return detect.EasyImage(newimg)
 
-def mask_coords(ei, mask):
+def mask_coords(ei, mask, x0 = 0, y0 = 0, x1 = None, y1 = None):
     try:
         h,w = mask.shape
     except ValueError:
         return None
-    x0,y0,x1,y1 = 0,0,h,w
+    #x0,y0,x1,y1 = 0,0,h,w
+    if x1 is None:
+        x1 = h
+    if y1 is None:
+        y1 = w
     for i in range(0, h):
         if any(mask[i,:]):
             x0 = i
@@ -135,14 +143,15 @@ def join_overlapping(rects):
     return results
             
 def extract_masks(img, outdir = None, obj = "person"):
-    masks, _, pred_class = get_prediction(img)
+    masks, b, pred_class = get_prediction(img)
     indices = [i for i, x in enumerate(pred_class) if x == obj]
     ei = detect.EasyImage(cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR))
     h,w = ei.getimg().shape[0:2]
     mastermask = np.zeros((h,w))
     coords = []
     for i in indices:
-        test = mask_coords(ei, masks[i])
+        x0,y0,x1,y1 = b[i]
+        test = mask_coords(ei, masks[i], y0,x0,y1,x1)
         if test is not None:
             mastermask = np.logical_or(mastermask, masks[i])
             coords.append(test)
