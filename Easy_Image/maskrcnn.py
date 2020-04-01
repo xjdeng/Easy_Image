@@ -9,6 +9,7 @@ from collections import defaultdict, deque
 import random
 import uuid
 import gc
+from PIL import Image
 
 
 model = torchvision.models.detection.maskrcnn_resnet50_fpn(pretrained=True)
