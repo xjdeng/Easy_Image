@@ -150,7 +150,9 @@ def extract_masks(img, outdir = None, obj = "person"):
     mastermask = np.zeros((h,w))
     coords = []
     for i in indices:
-        x0,y0,x1,y1 = b[i]
+        a0,a1 = b[i]
+        x0,y0 = a0
+        x1,y1 = a1
         test = mask_coords(ei, masks[i], y0,x0,y1,x1)
         if test is not None:
             mastermask = np.logical_or(mastermask, masks[i])
