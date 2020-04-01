@@ -30,8 +30,7 @@ COCO_INSTANCE_CATEGORY_NAMES = [
     'clock', 'vase', 'scissors', 'teddy bear', 'hair drier', 'toothbrush'
 ]
 
-def get_prediction(ei, threshold=0.99):
-    img = cv2.cvtColor(ei.getimg(),cv2.COLOR_BGR2RGB)
+def get_prediction(img, threshold=0.99):
     transform = T.Compose([T.ToTensor()])
     img = transform(img)
     pred = model([img])
@@ -134,9 +133,10 @@ def join_overlapping(rects):
             results.append(test)
     return results
             
-def extract_masks(ei, outdir = None, obj = "person"):
-    masks, _, pred_class = get_prediction(ei)
+def extract_masks(img, outdir = None, obj = "person"):
+    masks, _, pred_class = get_prediction(img)
     indices = [i for i, x in enumerate(pred_class) if x == obj]
+    ei = detect.EasyImage(cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
     h,w = ei.getimg().shape[0:2]
     mastermask = np.zeros((h,w))
     coords = []
@@ -226,8 +226,8 @@ def extract_dir_masks(imgdir, outdir, obj = "person"):
         gc.collect()
         try:
             print(f)
-            ei = detect.EasyImageFile(f)
-            print(len(extract_masks(ei, outdir, obj)))
+            img = Image.open(f)
+            print(len(extract_masks(img, outdir, obj)))
             print("Images Found!")
         except Exception as e:
             print(e)
