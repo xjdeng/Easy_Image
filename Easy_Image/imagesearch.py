@@ -6,7 +6,7 @@ try:
 except ImportError:
     import detect
     
-def run(start = "./", batch = 100):
+def run(start = "./", batch = 5000):
     idxfile = "{}/image_index.csv".format(start)
     filequeue = list(path(start).walkfiles())
     try:
@@ -27,6 +27,7 @@ def run(start = "./", batch = 100):
                 existing.loc[fpath] = [mtime] + ei.describe()
                 print("Extracted")
             except detect.NotAnImage:
+                existing.loc[fpath] = [mtime] + [0]*1440
                 print("Skipping due to error")
         else:
             #Skip existing file
