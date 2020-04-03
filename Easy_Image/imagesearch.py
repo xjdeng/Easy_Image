@@ -35,6 +35,7 @@ def run(start = "./", batch = 100):
         if i % batch == 0:
             print("Saving results")
             existing.to_csv(idxfile)
+    existing.to_csv(idxfile)
 
 def search(img, start = "./", prefix = ""):
     if isinstance(img, str):
