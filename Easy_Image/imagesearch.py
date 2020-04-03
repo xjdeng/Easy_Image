@@ -60,14 +60,11 @@ def search(img, start = "./", prefix = ""):
         existing = pd.read_csv(start, index_col = 0)
     except IOError:
         existing = pd.read_csv("{}/image_index.zip".format(start), index_col = 0)
-    dist = []
-    index = []
-    for i, row in existing.iterrows():
-        if str(i).startswith(prefix):
-            dist.append(np.linalg.norm(desc - np.array(row[1:])))
-            index.append(i)
+    index = [i for (i,_) in existing.iterrows() if str(i).startswith(prefix)]
+    M = existing.loc[index].to_numpy()[:,1:]
+    dist = np.linalg.norm(desc - M, axis=1)
     output = pd.DataFrame(index = index)
     output['dist'] = dist
-    output.sort_values('dist', iplace=True)
+    output.sort_values('dist', inplace=True)
     print(output.head())
     return output
