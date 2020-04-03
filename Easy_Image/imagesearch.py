@@ -15,7 +15,7 @@ def run(start = "./", batch = 100):
     except IOError:
         lookup = {}
         columns = ['mtime'] + list(range(0,1440))
-        existing = pd.DataFrame(index=columns)
+        existing = pd.DataFrame(columns=columns)
     for i,f in enumerate(filequeue):
         mtime = f.mtime
         fpath = str(f).replace("\\","/")
