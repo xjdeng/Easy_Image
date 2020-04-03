@@ -16,6 +16,7 @@ def run(start = "./", batch = 5000):
         lookup = {}
         columns = ['mtime'] + list(range(0,1440))
         existing = pd.DataFrame(columns=columns)
+    j = 0
     for i,f in enumerate(filequeue):
         mtime = f.mtime
         fpath = str(f).replace("\\","/")
@@ -25,6 +26,7 @@ def run(start = "./", batch = 5000):
             try:
                 ei = detect.EasyImageFile(f)
                 existing.loc[fpath] = [mtime] + ei.describe()
+                j += 1
                 print("Extracted")
             except detect.NotAnImage:
                 existing.loc[fpath] = [mtime] + [0]*1440
@@ -33,7 +35,7 @@ def run(start = "./", batch = 5000):
             #Skip existing file
             print("Skipping existing file")
         print("{} out of {} files completed".format(1+i, len(filequeue)))
-        if (i+1) % batch == 0:
+        if (j+1) % batch == 0:
             print("Saving results")
             existing.to_csv(idxfile)
     existing.to_csv(idxfile)
