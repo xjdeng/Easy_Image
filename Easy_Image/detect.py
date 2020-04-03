@@ -98,7 +98,7 @@ Will not color your image, unfortunately, but if it contains only 2 dimensions
     if isinstance(img, str):
         try:
             img = readgif(img)
-        except (ValueError, cv2.error, ImportError):
+        except (ValueError, cv2.error, ImportError, ModuleNotFoundError):
             img = cv2.imread(img)
     if img is None:
         raise NotAnImage
