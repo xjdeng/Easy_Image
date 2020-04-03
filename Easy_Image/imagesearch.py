@@ -68,6 +68,6 @@ def search(img, start = "./", prefix = ""):
             index.append(i)
     output = pd.DataFrame(index = index)
     output['dist'] = dist
-    output.sort_values('dist')
+    output.sort_values('dist', iplace=True)
     print(output.head())
     return output
