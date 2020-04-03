@@ -6,7 +6,7 @@ try:
 except ImportError:
     import detect
     
-def index(start = "./", batch = 100):
+def run(start = "./", batch = 100):
     idxfile = "{}/image_index.csv".format(start)
     filequeue = list(path(start).walkfiles())
     try:
