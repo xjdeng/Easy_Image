@@ -32,7 +32,7 @@ def run(start = "./", batch = 100):
             #Skip existing file
             print("Skipping existing file")
         print("{} out of {} files completed".format(1+i, len(filequeue)))
-        if i+1 % batch == 0:
+        if (i+1) % batch == 0:
             print("Saving results")
             existing.to_csv(idxfile)
     existing.to_csv(idxfile)
