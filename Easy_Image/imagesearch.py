@@ -6,6 +6,7 @@ try:
 except ImportError:
     import detect
 import gc
+import copy
 
 def smartwalkfiles(start):
     dirs = path(start).dirs()
@@ -100,3 +101,85 @@ def search(img, start = "./", prefix = ""):
     output.sort_values('dist', inplace=True)
     print(output.head())
     return output
+
+def run_faces(start = "./", batch = 5000):
+    idxfile = "{}/face_index.zip".format(start)
+    columns = ['file','mtime','faces','left','top','right','bottom'] + list(range(0,128))
+    addition = pd.DataFrame(columns=columns)
+    existing = None
+    def save(ex, ad):
+        print("Saving results")
+        gc.collect()
+        ex = ex.append(ad, sort=True)
+        gc.collect()
+        ex.to_csv(idxfile)
+    try:
+        filequeue = set([str(f).replace("\\","/") for f in smartwalkfiles(start)])
+        try:
+            existing = pd.read_csv(idxfile, index_col = 0, low_memory=True)
+            existing.columns = columns
+            gc.collect()
+            lookup = {f:s for (f,s) in zip(existing['file'], existing['mtime'])}
+            remove_keys = []
+            for f in lookup.keys():
+                if f not in filequeue:
+                    remove_keys.append(f)
+                    print("{} no longer found, deleting from database".format(f))
+            for f in remove_keys:
+                #https://stackoverflow.com/questions/18172851/deleting-dataframe-row-in-pandas-based-on-column-value
+                existing.drop(existing.loc[existing['file']==f].index,0,inplace=True)
+                del lookup[f]
+        except IOError:
+            lookup = {}
+            existing = pd.DataFrame(columns=columns)
+        j = 0
+        if len(existing.index) == 0:
+            idx = 0
+        else:
+            idx = 1 + max(existing.index)
+        for i,f0 in enumerate(filequeue):
+            f = path(f0)
+            mtime = f.mtime
+            fpath = str(f).replace("\\","/")
+            print(fpath)
+            if lookup.get(fpath) != mtime:
+                j += 1
+                existing.drop(existing.loc[existing['file'] == fpath].index, inplace=True)
+                try:
+                    ei = detect.EasyImageFile(f)
+                    faces = ei.detect_faces_simple()
+                    nfaces = len(faces)
+                    newrow = [fpath, mtime, nfaces]
+                    print("Found {} faces".format(nfaces))
+                    if nfaces == 0:
+                        newrow += list(range(0,132))
+                        addition.loc[idx] = newrow
+                        idx += 1
+                    else:
+                        for face in faces:
+                            newrow2 = copy.deepcopy(newrow)
+                            newrow2 += [face.left(), face.top(), face.right(), face.bottom()]
+                            newrow2 += list(face.face_encoding())
+                            addition.loc[idx] = newrow2
+                            idx += 1
+                except detect.NotAnImage:
+                    addition.loc[idx] = [fpath, mtime] + list(range(0,133))
+                    print("Skipping due to error")
+            else:
+                print("Skipping existing file")
+            print("{} out of {} files completed".format(1+i, len(filequeue)))
+            if (j+1) % batch == 0:
+                print("Appending current batch")
+                gc.collect()
+                existing = existing.append(addition, sort=True)
+                gc.collect()
+                print("Saving results")
+                existing.to_csv(idxfile)
+                gc.collect()
+                addition = pd.DataFrame(columns=columns)
+                gc.collect()
+                j += 1            
+        save(existing, addition)
+    except Exception as e:
+        print(e)
+        save(existing, addition)

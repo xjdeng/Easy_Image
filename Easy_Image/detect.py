@@ -96,6 +96,8 @@ Will not color your image, unfortunately, but if it contains only 2 dimensions
 (gray), then it'll add a 3rd dimension with the same data.
     """
     if isinstance(img, str):
+        if img.lower().endswith(".swf"):
+            raise NotAnImage
         try:
             img = readgif(img)
         except (ValueError, cv2.error, ImportError, ModuleNotFoundError):
