@@ -156,25 +156,41 @@ def run_faces(start = "./", batch = 1000):
         try:
             existing = pd.read_csv(idxfile, index_col = 0, low_memory=True)
             existing.columns = columns
+            if len(existing.index) == 0:
+                idx = 0
+            else:
+                idx = 1 + max(existing.index)
             gc.collect()
             lookup = {f:s for (f,s) in zip(existing['file'], existing['mtime'])}
             remove_keys = []
+            remove_filequeue = []
             for f in lookup.keys():
                 if f not in filequeue:
+                    pathf = path(f)
+                    for f2 in filequeue:
+                        fp = path(f2)
+                        if (int(fp.mtime) == int(lookup[f])) & (pathf.name == fp.name):
+                            print("Moved file detected: {}".format(f))
+                            tmp = existing[existing['file']==f]
+                            for index in tmp.index:
+                                newrow = list(tmp.loc[index])
+                                newrow[0] = f2
+                                addition.loc[idx] = newrow
+                                idx += 1
+                            remove_filequeue.append(f2)
                     remove_keys.append(f)
                     print("{} no longer found, deleting from database".format(f))
             for f in remove_keys:
                 #https://stackoverflow.com/questions/18172851/deleting-dataframe-row-in-pandas-based-on-column-value
                 existing.drop(existing.loc[existing['file']==f].index,0,inplace=True)
                 del lookup[f]
+            for f2 in remove_filequeue:
+                filequeue.remove(f2)
         except IOError:
             lookup = {}
             existing = pd.DataFrame(columns=columns)
-        j = 0
-        if len(existing.index) == 0:
             idx = 0
-        else:
-            idx = 1 + max(existing.index)
+        j = 0
         for i,f0 in enumerate(filequeue):
             f = path(f0)
             mtime = f.mtime
