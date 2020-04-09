@@ -94,15 +94,33 @@ def search(img, start = "./", prefix = ""):
     except IOError:
         existing = pd.read_csv("{}/image_index.zip".format(start), index_col = 0, low_memory = True)
     index = [i for (i,_) in existing.iterrows() if str(i).startswith(prefix)]
-    M = existing.loc[index].to_numpy()[:,1:]
-    dist = np.linalg.norm(desc - M, axis=1)
+    #M = existing.loc[index].to_numpy()[:,1:]
+    cols = [str(i) for i in range(0,1440)]
+    dist = np.linalg.norm(desc - existing.loc[index][cols], axis=1)
     output = pd.DataFrame(index = index)
     output['dist'] = dist
     output.sort_values('dist', inplace=True)
     print(output.head())
     return output
 
-def run_faces(start = "./", batch = 5000):
+def search_faces(encoding, start = "./", prefix = ""):
+    try:
+        existing = pd.read_csv(start, index_col = 0, low_memory = True)
+    except IOError:
+        existing = pd.read_csv("{}/face_index.zip".format(start), index_col = 0, low_memory = True)
+    existing = existing[existing['faces'] > 0]
+    if len(prefix) > 0:
+        existing = existing[existing['file'].str.startswith(prefix)]
+    df = pd.DataFrame()
+    df['file'] = existing['file']
+    cols = [str(i) for i in range(128)]
+    g = np.linalg.norm(encoding - existing[cols], axis=1)
+    df['dist'] = g
+    df.sort_values('dist', inplace=True)
+    print(df.head())
+    return df
+
+def run_faces(start = "./", batch = 1000):
     idxfile = "{}/face_index.zip".format(start)
     columns = ['file','mtime','faces','left','top','right','bottom'] + list(range(0,128))
     addition = pd.DataFrame(columns=columns)
@@ -158,7 +176,7 @@ def run_faces(start = "./", batch = 5000):
                     else:
                         for face in faces:
                             newrow2 = copy.deepcopy(newrow)
-                            newrow2 += [face.left(), face.top(), face.right(), face.bottom()]
+                            newrow2 += [face.face.left(), face.face.top(), face.face.right(), face.face.bottom()]
                             newrow2 += list(face.face_encoding())
                             addition.loc[idx] = newrow2
                             idx += 1
