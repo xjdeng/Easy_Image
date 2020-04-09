@@ -8,15 +8,25 @@ except ImportError:
 import gc
 import copy
 
-def smartwalkfiles(start):
+def smartwalkfiles_old(start):
     dirs = path(start).dirs()
     gooddirs = []
     for d in dirs:
-        if ("$RECYCLE.BIN" not in d) & ("System Volume Information" not in d):
+        if ("$RECYCLE.BIN" not in d) & ("System Volume Information" not in d) \
+            &(".Spotlight-V100" not in d):
             gooddirs.append(d)
-    files = []
+    files = path("./").files()
     for d in gooddirs:
         files += d.walkfiles()
+    return files
+
+def smartwalkfiles(start):
+    files = path(start).files()
+    for d in path(start).dirs():
+        try:
+            files += smartwalkfiles(d)
+        except PermissionError:
+            pass
     return files
     
 def run(start = "./", batch = 5000):
@@ -39,13 +49,23 @@ def run(start = "./", batch = 5000):
             gc.collect()
             lookup = {f:s for (f,s) in zip(existing.index, existing['mtime'])}
             remove_keys = []
+            remove_filequeue = []
             for f in lookup.keys():
                 if f not in filequeue:
+                    pathf = path(f)
+                    for f2 in filequeue:
+                        fp = path(f2)
+                        if (int(fp.mtime) == int(lookup[f])) & (pathf.name == fp.name):
+                            print("Moved file detected: {}".format(f))
+                            addition.loc[f2] = existing.loc[f]
+                            remove_filequeue.append(f2)
                     remove_keys.append(f)
                     print("{} no longer found, deleting from database".format(f))
             existing.drop(remove_keys,0,inplace=True)
             for f in remove_keys:
                 del lookup[f]
+            for f2 in remove_filequeue:
+                filequeue.remove(f2)
         except IOError:
             lookup = {}
             existing = pd.DataFrame(columns=columns)
