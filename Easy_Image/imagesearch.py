@@ -7,6 +7,7 @@ except ImportError:
     import detect
 import gc
 import copy
+import dlib
 
 def smartwalkfiles_old(start):
     dirs = path(start).dirs()
@@ -140,8 +141,11 @@ def search_faces(encoding, start = "./", prefix = ""):
     print(df.head())
     return df
 
-def run_faces(start = "./", batch = 1000):
-    idxfile = "{}/face_index.zip".format(start)
+def run_faces(start = "./", batch = 1000, faceimgs = False):
+    if faceimgs:
+        idxfile = "{}/faceimgs_index.zip".format(start)
+    else:
+        idxfile = "{}/face_index.zip".format(start)
     columns = ['file','mtime','faces','left','top','right','bottom'] + list(range(0,128))
     addition = pd.DataFrame(columns=columns)
     existing = None
@@ -201,7 +205,13 @@ def run_faces(start = "./", batch = 1000):
                 existing.drop(existing.loc[existing['file'] == fpath].index, inplace=True)
                 try:
                     ei = detect.EasyImageFile(f)
-                    faces = ei.detect_faces_simple()
+                    if faceimgs:
+                        h,w = ei.getimg().shape[0:2]
+                        rect = dlib.rectangle(0,0,w,h)
+                        ef = detect.EasyFace(ei, rect)
+                        faces = detect.EasyFaceList([ef])
+                    else:
+                        faces = ei.detect_faces_simple()
                     nfaces = len(faces)
                     newrow = [fpath, mtime, nfaces]
                     print("Found {} faces".format(nfaces))
