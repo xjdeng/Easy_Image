@@ -229,6 +229,8 @@ def run_faces(start = "./", batch = 1000, faceimgs = False):
                 except detect.NotAnImage:
                     addition.loc[idx] = [fpath, mtime] + list(range(0,133))
                     print("Skipping due to error")
+                except PermissionError:                    
+                    print("Permission Error, skipping")
             else:
                 print("Skipping existing file")
             print("{} out of {} files completed".format(1+i, len(filequeue)))
