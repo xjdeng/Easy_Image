@@ -142,8 +142,8 @@ def join_overlapping(rects):
             results.append(test)
     return results
             
-def extract_masks(img, outdir = None, obj = "person"):
-    masks, b, pred_class = get_prediction(img)
+def extract_masks(img, outdir = None, obj = "person", thresh = 0.99):
+    masks, b, pred_class = get_prediction(img, thresh)
     indices = [i for i, x in enumerate(pred_class) if x == obj]
     ei = detect.EasyImage(cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR))
     h,w = ei.getimg().shape[0:2]
@@ -229,7 +229,7 @@ def generate_from_dir(maskdir, outdir, h, w, n = 1, max_h = 500, max_w = 500):
             img[x0:x1,y0:y1] = ei.getimg()
         cv2.imwrite("{}/collage_{}.jpg".format(outdir, i), img)
 
-def extract_dir_masks(imgdir, outdir, obj = "person", remove = False):
+def extract_dir_masks(imgdir, outdir, obj = "person", thresh = 0.99, remove = False):
     """
     Important
     """
@@ -239,7 +239,7 @@ def extract_dir_masks(imgdir, outdir, obj = "person", remove = False):
         try:
             print(f)
             img = Image.open(f)
-            print(len(extract_masks(img, outdir, obj)))
+            print(len(extract_masks(img, outdir, obj, thresh)))
             print("Images Found!")
         except Exception as e:
             print(e)
