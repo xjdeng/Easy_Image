@@ -38,7 +38,7 @@ def get_prediction(img_path, threshold=0.99):
 def get_obj(img, obj, thresh=0.99):
     try:
         res = get_prediction(img, thresh)
-        return [a for (a,b) in zip(res[0], res[1])  if b == obj]
+        return [a[0] for (a,b) in zip(res[0], res[1])  if b == obj]
     except IndexError:
         return []
 
