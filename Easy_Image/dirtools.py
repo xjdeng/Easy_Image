@@ -40,6 +40,9 @@ def randname(f):
     ext = path(f).ext
     return str(str(uuid.uuid4())) + ext
 
+def pathify(paths, prefix = ""):
+    return [path(prefix + f) for f in paths]
+
 def copy(mylist, mydest):
     [f.copy(mydest) for f in mylist]
     
