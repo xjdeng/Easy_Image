@@ -154,11 +154,12 @@ def run_faces(start = "./", batch = 1000, faceimgs = False):
         gc.collect()
         ex = ex.append(ad, sort=True)
         gc.collect()
-        ex.to_csv(idxfile)
+        ex[columns].to_csv(idxfile)
     try:
         filequeue = set([str(f).replace("\\","/") for f in smartwalkfiles(start)])
         try:
             existing = pd.read_csv(idxfile, index_col = 0, low_memory=True)
+            existing.index = list(range(0, len(existing)))
             existing.columns = columns
             if len(existing.index) == 0:
                 idx = 0
@@ -168,26 +169,55 @@ def run_faces(start = "./", batch = 1000, faceimgs = False):
             lookup = {f:s for (f,s) in zip(existing['file'], existing['mtime'])}
             remove_keys = []
             remove_filequeue = []
+            mtimes = None
             for f in lookup.keys():
                 if f not in filequeue:
+                    if not mtimes:
+                        
+                        mtimes = {}
+                        for f2 in filequeue:
+                            fp = path(f2)
+                            mtimes[(fp.name, fp.mtime)] = f2
                     pathf = path(f)
-                    for f2 in filequeue:
-                        fp = path(f2)
-                        if (int(fp.mtime) == int(lookup[f])) & (pathf.name == fp.name):
-                            print("Moved file detected: {}".format(f))
-                            tmp = existing[existing['file']==f]
-                            for index in tmp.index:
-                                newrow = list(tmp.loc[index])
-                                newrow[0] = f2
-                                addition.loc[idx] = newrow
-                                idx += 1
-                            remove_filequeue.append(f2)
+                    f2 = mtimes.get((pathf.name, lookup[f]), None)
+                    if f2 is not None:
+                        print("Moved file detected: {}".format(f))
+                        tmp = existing[existing['file']==f]
+                        for index in tmp.index:
+                            newrow = list(tmp.loc[index])
+                            newrow[0] = f2
+                            addition.loc[idx] = newrow
+                            idx += 1
+                        remove_filequeue.append(f2)
                     remove_keys.append(f)
                     print("{} no longer found, deleting from database".format(f))
+            remove_keys = set(remove_keys)
+            remove_idx = []
+            print("Stage1")
+            for idx2 in existing.index:
+                f = existing['file'].loc[idx2]
+                print("Looking at file: " + f)
+                try:
+                    if f in remove_keys:
+                        remove_idx.append(idx2)
+                        print("Deleting")
+                        try:
+                            print("Looking up")
+                            del lookup[f]
+                        except KeyError:
+                            print("KeyError")
+                except TypeError:
+                    remove_idx.append(idx)
+                    print("TypeError")
+            print("Stage2")
+            existing.drop(existing.index[[remove_idx]], inplace=True)
+            '''
             for f in remove_keys:
                 #https://stackoverflow.com/questions/18172851/deleting-dataframe-row-in-pandas-based-on-column-value
                 existing.drop(existing.loc[existing['file']==f].index,0,inplace=True)
                 del lookup[f]
+            '''
+            print("Stage3")
             for f2 in remove_filequeue:
                 filequeue.remove(f2)
         except IOError:
@@ -195,6 +225,7 @@ def run_faces(start = "./", batch = 1000, faceimgs = False):
             existing = pd.DataFrame(columns=columns)
             idx = 0
         j = 0
+        print(len(filequeue))
         for i,f0 in enumerate(filequeue):
             f = path(f0)
             mtime = f.mtime
@@ -240,7 +271,7 @@ def run_faces(start = "./", batch = 1000, faceimgs = False):
                 existing = existing.append(addition, sort=True)
                 gc.collect()
                 print("Saving results")
-                existing.to_csv(idxfile)
+                existing[columns].to_csv(idxfile)
                 gc.collect()
                 addition = pd.DataFrame(columns=columns)
                 gc.collect()
@@ -248,4 +279,5 @@ def run_faces(start = "./", batch = 1000, faceimgs = False):
         save(existing, addition)
     except Exception as e:
         print(e)
+        print("Outer Exception")
         save(existing, addition)
