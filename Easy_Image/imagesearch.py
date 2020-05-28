@@ -141,7 +141,146 @@ def search_faces(encoding, start = "./", prefix = ""):
     print(df.head())
     return df
 
-def run_faces(start = "./", batch = 1000, faceimgs = False):
+def face_vector(f, fpath, mtime):
+    try:
+        ei = detect.EasyImageFile(f)
+        faces = ei.detect_faces_simple()
+        nfaces = len(faces)
+        newrow = [fpath, mtime, nfaces]
+        print("Found {} faces".format(nfaces))
+        if nfaces == 0:
+            newrow += list(range(0,132))
+            return [newrow]
+        else:
+            results = []
+            for face in faces:
+                newrow2 = copy.deepcopy(newrow)
+                newrow2 += [face.face.left(), face.face.top(), face.face.right(), face.face.bottom()]
+                newrow2 += list(face.face_encoding())
+                results.append(newrow2)
+            return results
+    except detect.NotAnImage:
+        print("Skipping due to error")
+        return [[fpath, mtime] + list(range(0,133))]
+    
+
+def run_meta(func, columns, default_file, start = "./", batch = 1000):
+    idxfile = "{}/{}".format(start, default_file)
+    addition = pd.DataFrame(columns=columns)
+    existing = None
+    def save(ex, ad):
+        print("Saving results")
+        gc.collect()
+        ex = ex.append(ad, sort=True)
+        gc.collect()
+        ex[columns].to_csv(idxfile)
+    try:
+        filequeue = set([str(f).replace("\\","/") for f in smartwalkfiles(start)])
+        try:
+            existing = pd.read_csv(idxfile, index_col = 0, low_memory=True)
+            existing.index = list(range(0, len(existing)))
+            existing.columns = columns
+            if len(existing.index) == 0:
+                idx = 0
+            else:
+                idx = 1 + max(existing.index)
+            gc.collect()
+            lookup = {f:s for (f,s) in zip(existing['file'], existing['mtime'])}
+            remove_keys = []
+            remove_filequeue = []
+            mtimes = None
+            for f in lookup.keys():
+                if f not in filequeue:
+                    if not mtimes:
+                        
+                        mtimes = {}
+                        for f2 in filequeue:
+                            fp = path(f2)
+                            mtimes[(fp.name, fp.mtime)] = f2
+                    pathf = path(f)
+                    f2 = mtimes.get((pathf.name, lookup[f]), None)
+                    if f2 is not None:
+                        print("Moved file detected: {}".format(f))
+                        tmp = existing[existing['file']==f]
+                        for index in tmp.index:
+                            newrow = list(tmp.loc[index])
+                            newrow[0] = f2
+                            addition.loc[idx] = newrow
+                            idx += 1
+                        remove_filequeue.append(f2)
+                    remove_keys.append(f)
+                    print("{} no longer found, deleting from database".format(f))
+            remove_keys = set(remove_keys)
+            remove_idx = []
+            print("Stage1")
+            for idx2 in existing.index:
+                f = existing['file'].loc[idx2]
+                try:
+                    if f in remove_keys:
+                        print("Looking at file: " + f)
+                        remove_idx.append(idx2)
+                        print("Deleting")
+                        try:
+                            print("Looking up")
+                            del lookup[f]
+                        except KeyError:
+                            print("KeyError")
+                except TypeError:
+                    remove_idx.append(idx)
+                    print("TypeError")
+            print("Stage2")
+            existing.drop(existing.index[remove_idx], inplace=True)
+            print("Stage3")
+            for f2 in remove_filequeue:
+                filequeue.remove(f2)
+        except IOError:
+            lookup = {}
+            existing = pd.DataFrame(columns=columns)
+            idx = 0
+        j = 0
+        print(len(filequeue))
+        for i,f0 in enumerate(filequeue):
+            f = path(f0)
+            mtime = f.mtime
+            fpath = str(f).replace("\\","/")
+            print(fpath)
+            if lookup.get(fpath) != mtime:
+                j += 1
+                existing.drop(existing.loc[existing['file'] == fpath].index, inplace=True)
+                #Begin snippet
+                try:
+                    additions = func(f, fpath, mtime)
+                    for add in additions:
+                        addition.loc[idx] = add
+                        idx += 1
+                except PermissionError:                    
+                    print("Permission Error, skipping")
+                #End snippet
+            else:
+                print("Skipping existing file")
+            print("{} out of {} files completed".format(1+i, len(filequeue)))
+            if (j+1) % batch == 0:
+                print("Appending current batch")
+                gc.collect()
+                existing = existing.append(addition, sort=True)
+                gc.collect()
+                print("Saving results")
+                existing[columns].to_csv(idxfile)
+                gc.collect()
+                addition = pd.DataFrame(columns=columns)
+                gc.collect()
+                j += 1            
+        save(existing, addition)
+    except Exception as e:
+        print(e)
+        print("Outer Exception")
+        save(existing, addition)
+        
+def run_faces(start = "./", batch = 1000):
+    columns = ['file','mtime','faces','left','top','right','bottom'] + list(range(0,128))
+    run_meta(face_vector, columns, "face_index.zip", start, batch)
+
+def run_faces_old(start = "./", batch = 1000, faceimgs = False):
     if faceimgs:
         idxfile = "{}/faceimgs_index.zip".format(start)
     else:
@@ -196,9 +335,9 @@ def run_faces(start = "./", batch = 1000, faceimgs = False):
             print("Stage1")
             for idx2 in existing.index:
                 f = existing['file'].loc[idx2]
-                print("Looking at file: " + f)
                 try:
                     if f in remove_keys:
+                        print("Looking at file: " + f)
                         remove_idx.append(idx2)
                         print("Deleting")
                         try:
@@ -210,13 +349,7 @@ def run_faces(start = "./", batch = 1000, faceimgs = False):
                     remove_idx.append(idx)
                     print("TypeError")
             print("Stage2")
-            existing.drop(existing.index[[remove_idx]], inplace=True)
-            '''
-            for f in remove_keys:
-                #https://stackoverflow.com/questions/18172851/deleting-dataframe-row-in-pandas-based-on-column-value
-                existing.drop(existing.loc[existing['file']==f].index,0,inplace=True)
-                del lookup[f]
-            '''
+            existing.drop(existing.index[remove_idx], inplace=True)
             print("Stage3")
             for f2 in remove_filequeue:
                 filequeue.remove(f2)
@@ -234,6 +367,7 @@ def run_faces(start = "./", batch = 1000, faceimgs = False):
             if lookup.get(fpath) != mtime:
                 j += 1
                 existing.drop(existing.loc[existing['file'] == fpath].index, inplace=True)
+                #Begin snippet
                 try:
                     ei = detect.EasyImageFile(f)
                     if faceimgs:
@@ -262,6 +396,7 @@ def run_faces(start = "./", batch = 1000, faceimgs = False):
                     print("Skipping due to error")
                 except PermissionError:                    
                     print("Permission Error, skipping")
+                #End snippet
             else:
                 print("Skipping existing file")
             print("{} out of {} files completed".format(1+i, len(filequeue)))
