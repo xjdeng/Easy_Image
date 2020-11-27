@@ -29,6 +29,24 @@ def smartwalkfiles(start):
         except PermissionError:
             pass
     return files
+
+def same_mtime(t1, t2):
+    if not t1:
+        return False
+    if t1 == t2:
+        return True
+    if abs(t1 - t2) == 3600:
+        return True
+    return False
+
+def smart_lookup(mtimes, name, mtime):
+    tmp = mtimes.get((name, mtime), None)
+    if tmp:
+        return tmp
+    tmp = mtimes.get((name, mtime + 3600), None)
+    if tmp:
+        return tmp
+    return mtimes.get((name, mtime - 3600), None)
     
 def run(start = "./", batch = 5000):
     idxfile = "{}/image_index.zip".format(start)
@@ -56,7 +74,7 @@ def run(start = "./", batch = 5000):
                     pathf = path(f)
                     for f2 in filequeue:
                         fp = path(f2)
-                        if (int(fp.mtime) == int(lookup[f])) & (pathf.name == fp.name):
+                        if (same_mtime(fp.mtime, lookup[f])) & (pathf.name == fp.name):
                             print("Moved file detected: {}".format(f))
                             addition.loc[f2] = existing.loc[f]
                             remove_filequeue.append(f2)
@@ -198,7 +216,8 @@ def run_meta(func, columns, default_file, start = "./", batch = 1000):
                             fp = path(f2)
                             mtimes[(fp.name, fp.mtime)] = f2
                     pathf = path(f)
-                    f2 = mtimes.get((pathf.name, lookup[f]), None)
+                    #f2 = mtimes.get((pathf.name, lookup[f]), None)
+                    f2 = smart_lookup(mtimes, pathf.name, lookup[f])
                     if f2 is not None:
                         print("Moved file detected: {}".format(f))
                         tmp = existing[existing['file']==f]
@@ -244,7 +263,7 @@ def run_meta(func, columns, default_file, start = "./", batch = 1000):
             mtime = f.mtime
             fpath = str(f).replace("\\","/")
             print(fpath)
-            if lookup.get(fpath) != mtime:
+            if not same_mtime(lookup.get(fpath), mtime):#lookup.get(fpath) != mtime:
                 j += 1
                 existing.drop(existing.loc[existing['file'] == fpath].index, inplace=True)
                 #Begin snippet
