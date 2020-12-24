@@ -142,7 +142,7 @@ def search(img, start = "./", prefix = ""):
     print(output.head())
     return output
 
-def search_faces(encoding, start = "./", prefix = ""):
+def load_faces(start = "./", prefix = ""):
     try:
         existing = pd.read_csv(start, index_col = 0, low_memory = True)
     except IOError:
@@ -150,6 +150,10 @@ def search_faces(encoding, start = "./", prefix = ""):
     existing = existing[existing['faces'] > 0]
     if len(prefix) > 0:
         existing = existing[existing['file'].str.startswith(prefix)]
+    return existing
+
+def search_faces(encoding, start = "./", prefix = ""):
+    existing = load_faces(start, prefix)
     df = pd.DataFrame()
     df['file'] = existing['file']
     cols = [str(i) for i in range(128)]
