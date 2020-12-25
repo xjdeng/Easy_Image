@@ -174,9 +174,9 @@ def extract_masks(img, outdir = None, obj = "person", thresh = 0.99):
         test = detect.EasyImage(newimg)
         output.append(test)
         if outdir:
-            newfile = path("{}/{}.png".format(outdir, str(uuid.uuid4())))
+            newfile = path("{}/{}.jpg".format(outdir, str(uuid.uuid4())))
             while newfile.exists():
-                newfile = path("{}/{}.png".format(outdir, str(uuid.uuid4())))
+                newfile = path("{}/{}.jpg".format(outdir, str(uuid.uuid4())))
             test.save(newfile)
     return output
     
