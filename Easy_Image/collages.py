@@ -38,7 +38,8 @@ def make_horizontal(list_of_lists, min_w, tgt_h, num_images, scheme = 'eqwt',\
     """
     if isinstance(list_of_lists, str):
         p = path(list_of_lists)
-        list_of_lists = [detect.load_image_dir(q) for q in p.dirs()]
+        #list_of_lists = [detect.load_image_dir(q) for q in p.dirs()]
+        list_of_lists = [path(q).files() for q in p.dirs()]
     if scheme == "eqwt":
         scheme = scheme_eqwt
     elif scheme == "weighted":
@@ -55,7 +56,11 @@ def make_horizontal(list_of_lists, min_w, tgt_h, num_images, scheme = 'eqwt',\
             else:
                 mydir = scheme(list2)
                 if len(mydir) != 0:
-                    choice = np.random.choice(mydir)
+                    choice0 = np.random.choice(mydir)
+                    try:
+                        choice = detect.EasyImageFile(choice0)
+                    except detect.NotAnImage:
+                        continue
                     h,w,_ = choice.getimg().shape
                     width += round(1.0*tgt_h*w/h)
                     candidates.append(choice)
