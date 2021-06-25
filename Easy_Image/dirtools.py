@@ -48,11 +48,19 @@ def copy(mylist, mydest):
     
 def copy_and_rename(mylist, mydest):
     [f.copy("{}/{}".format(mydest, randname(f))) for f in mylist]
+    
+def copy_and_log(mylist, mydest, logfile, copyfunc = copy_and_rename):
+    copyfunc(mylist, mydest)
+    additions = [str(f) for f in mylist]
+    with open(logfile, 'a') as f:
+        for fname in additions:
+            f.write("{}\n".format(fname))
+        
 
 def move(mylist, mydest):
     [f.move(mydest) for f in mylist]
 
-def run(basedir, maxresults, scheme, minfiles = 10):
+def run(basedir, maxresults, scheme, minfiles = 10, banned = {}):
     folders = path(basedir).dirs()
     if len(folders) == 0:
         files = path(basedir).files()
@@ -60,7 +68,7 @@ def run(basedir, maxresults, scheme, minfiles = 10):
         return files[0:min(maxresults, len(files))]
     dirfiles = {}
     for d in path(basedir).walkdirs():
-        files = d.files()
+        files = [f for f in d.files() if f not in banned]
         random.shuffle(files)
         if len(files) > minfiles:
             dirfiles[d] = files
