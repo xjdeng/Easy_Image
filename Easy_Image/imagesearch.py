@@ -35,7 +35,10 @@ def same_mtime(t1, t2):
         return False
     if t1 == t2:
         return True
-    if abs(t1 - t2) == 3600:
+    diff = abs(t1 - t2)
+    if diff % 3600 == 0:
+        return True
+    if diff < 0.001:
         return True
     return False
 
@@ -94,7 +97,9 @@ def run(start = "./", batch = 5000):
             mtime = f.mtime
             fpath = str(f).replace("\\","/")
             print(fpath)
-            if lookup.get(fpath) != mtime:
+            #if lookup.get(fpath) != mtime:
+            test = lookup.get(fpath)
+            if (test is not None) & ((test - mtime) % 3600 == 0):
                 #Index new file
                 j += 1
                 try:
@@ -195,19 +200,23 @@ def run_meta(func, columns, default_file, start = "./", batch = 1000):
         gc.collect()
         ex = ex.append(ad, sort=True)
         gc.collect()
+        oldpaths = list(ex['file'])
+        ex['file'] = [p.replace(start, "./") for p in ex['file']]
         ex[columns].to_csv(idxfile)
+        ex['file'] = oldpaths
     try:
         filequeue = set([str(f).replace("\\","/") for f in smartwalkfiles(start)])
         try:
             existing = pd.read_csv(idxfile, index_col = 0, low_memory=True)
             existing.index = list(range(0, len(existing)))
             existing.columns = columns
+            existing['file'] = [p.replace("./",start) for p in existing['file']]
             if len(existing.index) == 0:
                 idx = 0
             else:
                 idx = 1 + max(existing.index)
             gc.collect()
-            lookup = {f:s for (f,s) in zip(existing['file'], existing['mtime'])}
+            lookup = {f.replace("./",start):s for (f,s) in zip(existing['file'], existing['mtime'])}
             remove_keys = []
             remove_filequeue = []
             mtimes = None
@@ -268,8 +277,13 @@ def run_meta(func, columns, default_file, start = "./", batch = 1000):
             fpath = str(f).replace("\\","/")
             print(fpath)
             if not same_mtime(lookup.get(fpath), mtime):#lookup.get(fpath) != mtime:
+                #print("Adding: {}".format(fpath))
+                #print(lookup.get(fpath), mtime)
                 j += 1
+                #print(fpath)
+                #print(existing.tail())
                 existing.drop(existing.loc[existing['file'] == fpath].index, inplace=True)
+                #print(existing.tail())
                 #Begin snippet
                 try:
                     additions = func(f, fpath, mtime)
@@ -280,6 +294,7 @@ def run_meta(func, columns, default_file, start = "./", batch = 1000):
                     print("Permission Error, skipping")
                 #End snippet
             else:
+    
                 print("Skipping existing file")
             print("{} out of {} files completed".format(1+i, len(filequeue)))
             if (j+1) % batch == 0:
