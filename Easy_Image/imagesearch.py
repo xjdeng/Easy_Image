@@ -314,9 +314,9 @@ def run_meta(func, columns, default_file, start = "./", batch = 1000):
         print("Outer Exception")
         save(existing, addition)
         
-def run_faces(start = "./", batch = 1000):
+def run_faces(start = "./", fname = "face_index.csv", batch = 1000):
     columns = ['file','mtime','faces','left','top','right','bottom'] + list(range(0,128))
-    run_meta(face_vector, columns, "face_index.zip", start, batch)
+    run_meta(face_vector, columns, fname, start, batch)
 
 def run_faces_old(start = "./", batch = 1000, faceimgs = False):
     if faceimgs:
