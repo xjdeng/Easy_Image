@@ -63,7 +63,8 @@ def run(start = "./", batch = 5000):
     def save(ex, ad):
         print("Saving results")
         gc.collect()
-        ex = ex.append(ad, sort=True)
+        #ex = ex.append(ad, sort=True)
+        ex = pd.concat([ex, ad], sort=True, ignore_index=True)
         gc.collect()
         ex.to_csv(idxfile)
     try:
@@ -123,7 +124,7 @@ def run(start = "./", batch = 5000):
             if (j+1) % batch == 0:
                 print("Appending current batch")
                 gc.collect()
-                existing = existing.append(addition, sort=True)
+                existing = pd.concat([existing, addition], sort=True, ignore_index=True)
                 gc.collect()
                 print("Saving results")
                 existing.to_csv(idxfile)
@@ -209,7 +210,7 @@ def run_meta(func, columns, default_file, start = "./", batch = 1000):
         #ad = ad.astype(dtypes)
         print("Saving results")
         gc.collect()
-        ex = ex.append(ad, sort=True)
+        ex = pd.concat([ex, ad], sort=True, ignore_index=True)
         gc.collect()
         oldpaths = list(ex['file'])
         ex['file'] = [p.replace(start, "./") for p in ex['file']]
@@ -323,7 +324,7 @@ def run_meta(func, columns, default_file, start = "./", batch = 1000):
                 gc.collect()
                 addition = pd.DataFrame(add, columns=columns, index=add_idx)
                 #addition = addition.astype(dtypes)
-                existing = existing.append(addition, sort=True)
+                existing = pd.concat([existing, addition], sort=True, ignore_index=True)
                 existing_files = set(existing['file'])
                 gc.collect()
                 #print("Saving results")
@@ -357,7 +358,7 @@ def run_faces_old(start = "./", batch = 1000, faceimgs = False):
     def save(ex, ad):
         print("Saving results")
         gc.collect()
-        ex = ex.append(ad, sort=True)
+        ex = pd.concat([ex, ad], sort=True, ignore_index=True)
         gc.collect()
         ex[columns].to_csv(idxfile)
     try:
@@ -469,7 +470,7 @@ def run_faces_old(start = "./", batch = 1000, faceimgs = False):
             if (j+1) % batch == 0:
                 print("Appending current batch")
                 gc.collect()
-                existing = existing.append(addition, sort=True)
+                existing = pd.concat([existing, addition], sort=True, ignore_index=True)
                 gc.collect()
                 print("Saving results")
                 existing[columns].to_csv(idxfile)
