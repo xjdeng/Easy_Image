@@ -8,6 +8,7 @@ except ImportError:
 import gc
 import copy
 import dlib
+from tqdm import tqdm
 
 def smartwalkfiles_old(start):
     dirs = path(start).dirs()
@@ -21,11 +22,14 @@ def smartwalkfiles_old(start):
         files += d.walkfiles()
     return files
 
-def smartwalkfiles(start):
+def smartwalkfiles(start, exclusions = []):
+    exclusions = set(exclusions)
     files = path(start).files()
     for d in path(start).dirs():
+        if str(d) in exclusions:
+            continue
         try:
-            files += smartwalkfiles(d)
+            files += smartwalkfiles(d, exclusions)
         except PermissionError:
             pass
     return files
@@ -87,7 +91,10 @@ def run(start = "./", batch = 5000):
             for f in remove_keys:
                 del lookup[f]
             for f2 in remove_filequeue:
-                filequeue.remove(f2)
+                try:
+                    filequeue.remove(f2)
+                except KeyError:
+                    print("Error: key {} not found".format(f2))
         except IOError:
             lookup = {}
             existing = pd.DataFrame(columns=columns)
@@ -193,9 +200,13 @@ def face_vector(f, fpath, mtime):
 
 def run_meta(func, columns, default_file, start = "./", batch = 1000):
     idxfile = "{}/{}".format(start, default_file)
-    addition = pd.DataFrame(columns=columns)
+    #addition = pd.DataFrame(columns=columns)
+    add_idx, add = [],[]
     existing = None
     def save(ex, ad):
+        addd_idx, addd = ad
+        ad = pd.DataFrame(addd, columns=columns, index=addd_idx)
+        #ad = ad.astype(dtypes)
         print("Saving results")
         gc.collect()
         ex = ex.append(ad, sort=True)
@@ -207,7 +218,7 @@ def run_meta(func, columns, default_file, start = "./", batch = 1000):
     try:
         filequeue = set([str(f).replace("\\","/") for f in smartwalkfiles(start)])
         try:
-            existing = pd.read_csv(idxfile, index_col = 0, low_memory=True)
+            existing = pd.read_csv(idxfile, index_col = 0, low_memory=True)#, dtype=dtypes)
             existing.index = list(range(0, len(existing)))
             existing.columns = columns
             existing['file'] = [p.replace("./",start) for p in existing['file']]
@@ -237,7 +248,9 @@ def run_meta(func, columns, default_file, start = "./", batch = 1000):
                         for index in tmp.index:
                             newrow = list(tmp.loc[index])
                             newrow[0] = f2
-                            addition.loc[idx] = newrow
+                            #addition.loc[idx] = newrow
+                            add_idx.append(idx)
+                            add.append(newrow)
                             idx += 1
                         remove_filequeue.append(f2)
                     remove_keys.append(f)
@@ -264,59 +277,74 @@ def run_meta(func, columns, default_file, start = "./", batch = 1000):
             existing.drop(existing.index[remove_idx], inplace=True)
             print("Stage3")
             for f2 in remove_filequeue:
-                filequeue.remove(f2)
+                try:
+                    filequeue.remove(f2)
+                except KeyError:
+                    print("File {} not found, skipping".format(f2))
         except IOError:
             lookup = {}
             existing = pd.DataFrame(columns=columns)
+            #existing = existing.astype(dtypes)
             idx = 0
         j = 0
         print(len(filequeue))
-        for i,f0 in enumerate(filequeue):
+        existing_files = set(existing['file'])
+        for i,f0 in enumerate(tqdm(filequeue)):
             f = path(f0)
             mtime = f.mtime
             fpath = str(f).replace("\\","/")
-            print(fpath)
+            #print(fpath)
             if not same_mtime(lookup.get(fpath), mtime):#lookup.get(fpath) != mtime:
                 #print("Adding: {}".format(fpath))
                 #print(lookup.get(fpath), mtime)
                 j += 1
                 #print(fpath)
                 #print(existing.tail())
-                existing.drop(existing.loc[existing['file'] == fpath].index, inplace=True)
+                if fpath in existing_files:
+                    existing.drop(existing.loc[existing['file'] == fpath].index, inplace=True)
                 #print(existing.tail())
                 #Begin snippet
                 try:
                     additions = func(f, fpath, mtime)
-                    for add in additions:
-                        addition.loc[idx] = add
+                    for ad in additions:
+                        #addition.loc[idx] = add
+                        add_idx.append(idx)
+                        add.append(ad)
                         idx += 1
                 except PermissionError:                    
-                    print("Permission Error, skipping")
+                    pass#print("Permission Error, skipping")
                 #End snippet
             else:
     
-                print("Skipping existing file")
-            print("{} out of {} files completed".format(1+i, len(filequeue)))
+                pass#print("Skipping existing file")
+            #print("{} out of {} files completed".format(1+i, len(filequeue)))
             if (j+1) % batch == 0:
-                print("Appending current batch")
+                #print("Appending current batch")
                 gc.collect()
+                addition = pd.DataFrame(add, columns=columns, index=add_idx)
+                #addition = addition.astype(dtypes)
                 existing = existing.append(addition, sort=True)
+                existing_files = set(existing['file'])
                 gc.collect()
-                print("Saving results")
+                #print("Saving results")
                 existing[columns].to_csv(idxfile)
                 gc.collect()
-                addition = pd.DataFrame(columns=columns)
+                #addition = pd.DataFrame(columns=columns, index=add_idx)
+                add_idx, add = [], []
                 gc.collect()
                 j += 1            
-        save(existing, addition)
-    except Exception as e:
+        save(existing, (add_idx, add))
+    except KeyboardInterrupt as e:
         print(e)
-        print("Outer Exception")
-        save(existing, addition)
+        save(existing, (add_idx, add))
+    #except Exception as e:
+    #    print(e)
+    #    print("Outer Exception")
+    #    save(existing, (add_idx, add))
         
-def run_faces(start = "./", fname = "face_index.csv", batch = 1000):
+def run_faces(start = "./", fname = "face_index.csv", batch = 1000, exclusions = []):
     columns = ['file','mtime','faces','left','top','right','bottom'] + list(range(0,128))
-    run_meta(face_vector, columns, fname, start, batch)
+    run_meta(face_vector, columns, fname, start, batch, exclusions)
 
 def run_faces_old(start = "./", batch = 1000, faceimgs = False):
     if faceimgs:
