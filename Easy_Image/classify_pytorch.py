@@ -9,6 +9,12 @@ from PIL import Image
 import cv2
 import numpy as np
 
+try:
+    transforms.Scale = transforms.Resize
+except AttributeError:
+    pass
+
+
 normalize = transforms.Normalize(
    mean=[0.485, 0.456, 0.406],
    std=[0.229, 0.224, 0.225]
